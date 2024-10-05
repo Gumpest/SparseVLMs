@@ -4,9 +4,9 @@
 
 <h5 align="center"> 
 
-[Yuan Zhang](https://gumpest.github.io/)<sup>1</sup>,
-[Chun-Kai Fan](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1</sup>,
-[Junpeng Ma]()<sup>2</sup>,
+[Yuan Zhang](https://gumpest.github.io/)<sup>1* </sup>,
+[Chun-Kai Fan](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1*</sup>,
+[Junpeng Ma]()<sup>2*</sup>,
 [Wenzhao Zheng](https://wzzheng.net/)<sup>3</sup>,
 [Tao Huang](https://taohuang.info/)<sup>4</sup>,
 [Kuan Cheng](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>,
@@ -15,7 +15,7 @@
 [Tomoyuki Okuno]()<sup>5</sup>,
 [Yohei Nakata]()<sup>5</sup>,
 [Kurt Keutzer](http://people.eecs.berkeley.edu/~keutzer/)<sup>3</sup>,
-[Shanghang Zhang](https://idm.pku.edu.cn/info/1017/1598.htm)<sup>1*✉️</sup>
+[Shanghang Zhang](https://idm.pku.edu.cn/info/1017/1598.htm)<sup>1✉️</sup>
 
 <sup>1</sup>School of Computer Science, Peking University, <sup>2</sup>Fudan University,
 
