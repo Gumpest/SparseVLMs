@@ -25,7 +25,7 @@
 </div>
 
 ## 📜 News 
-🔥 **[2024/10/15]** We relased **SparseVLM**! The code is now open source!
+🔥 **[2024/10/15]** We relased **[SparseVLM](https://arxiv.org/pdf/2410.04417)**! The code is now open source!
 
 
 <p align='center'>
