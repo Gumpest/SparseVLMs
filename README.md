@@ -94,10 +94,10 @@ This project is released under the [Apache 2.0 license](LICENSE).
 
 If you use SparseVLM in your research, please cite our work by using the following BibTeX entry:
 ```bibtex
-@article{zhang2024sparse,
+@article{zhang2024sparsevlm,
   title={SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference},
-  author={Zhang, Yuan and Fan, Chun-Kai and and Ma, Junpeng and Huang, Tao and Cheng, Kuan and Zhang, Shanghang},
-  journal={arXiv preprint arXiv:24010.08156},
+  author={Zhang, Yuan and Fan, Chun-Kai and Ma, Junpeng and Zheng, Wenzhao and Huang, Tao and Cheng, Kuan and Gudovskiy, Denis and Okuno, Tomoyuki and Nakata, Yohei and Keutzer, Kurt and others},
+  journal={arXiv preprint arXiv:2410.04417},
   year={2024}
 }
 
