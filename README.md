@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1> SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference </h1>
+<h1> [SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference](https://leofan90.github.io/SparseVLMs.github.io/) </h1>
 
 <h5 align="center"> 
 
