@@ -7,7 +7,7 @@
 [Yuan Zhang](https://gumpest.github.io/)<sup>1* </sup>,
 [Chun-Kai Fan](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1*</sup>,
 [Junpeng Ma]()<sup>2*</sup>,
-[Wenzhao Zheng](https://wzzheng.net/)<sup>3</sup>,
+[Wenzhao Zheng](https://wzzheng.net/)<sup>3✉️</sup>,
 [Tao Huang](https://taohuang.info/)<sup>4</sup>,
 [Kuan Cheng](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>,
 
@@ -104,4 +104,4 @@ If you use SparseVLM in your research, please cite our work by using the followi
 ```
 ## Acknowledgment
 
-We extend our gratitude to the open-source efforts of [LLaVA](https://github.com/haotian-liu/LLaVA), [MiniGemini](https://github.com/dvlab-research/MGM) and [VideoLLaVA](https://github.com/PKU-YuanGroup/Video-LLaVA).
+We extend our gratitude to the open-source efforts of [TCFormer](https://github.com/zengwang430521/TCFormer), [LLaVA](https://github.com/haotian-liu/LLaVA), [MiniGemini](https://github.com/dvlab-research/MGM) and [VideoLLaVA](https://github.com/PKU-YuanGroup/Video-LLaVA).
