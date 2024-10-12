@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1> [SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference](https://leofan90.github.io/SparseVLMs.github.io/) </h1>
+<h1> SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference </h1>
 
 <h5 align="center"> 
 
@@ -25,7 +25,7 @@
 </div>
 
 ## 📜 News 
-🔥 **[2024/10/15]** We relased **[SparseVLM](https://arxiv.org/pdf/2410.04417)**! The code is now open source!
+🔥 **[2024/10/15]** We relased **[SparseVLM](https://arxiv.org/pdf/2410.04417)**! The project page is [here](https://leofan90.github.io/SparseVLMs.github.io/), and the code is now open-source!
 
 
 <p align='center'>
