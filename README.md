@@ -4,7 +4,7 @@
 
 <h5 align="center"> 
 
-[Yuan Zhang](https://gumpest.github.io/)<sup>1* </sup>,
+[Yuan Zhang](https://gumpest.github.io/)<sup>1,3* </sup>,
 [Chun-Kai Fan](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1*</sup>,
 [Junpeng Ma]()<sup>2*</sup>,
 [Wenzhao Zheng](https://wzzheng.net/)<sup>3✉️</sup>,
@@ -25,7 +25,7 @@
 </div>
 
 ## 📜 News 
-🔥 **[2024/10/15]** We relased **[SparseVLM](https://arxiv.org/pdf/2410.04417)**! The project page is [here](https://leofan90.github.io/SparseVLMs.github.io/), and the code is now open-source!
+🔥 **[2024/10/15]** We released **[SparseVLM](https://arxiv.org/pdf/2410.04417)** and its **[Project Page](https://leofan90.github.io/SparseVLMs.github.io/)**! The **[Code](https://github.com/Gumpest/SparseVLMs)** is now open-source!
 
 
 <p align='center'>
