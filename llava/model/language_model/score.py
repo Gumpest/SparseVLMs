@@ -1,44 +1,53 @@
-'''
-Copyright (2024) Peking University. 
-Developers: Yuan Zhang, Chun-Kai Fan
-
-Licensed under the Apache License, Version 2.0 (the "License"); 
-you may not use this file except in compliance with the License. 
-You may obtain a copy of the License at 
-
-    http://www.apache.org/licenses/LICENSE-2.0 
-
-Unless required by applicable law or agreed to in writing, software 
-distributed under the License is distributed on an "AS IS" BASIS, 
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-See the License for the specific language governing permissions and 
-limitations under the License. 
-'''
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+layer_dict = {2:0,6:1,15:2}
+sparse_token_list_192 = [300,200,110]       # 2*576  4*300 10*200  16*118
+sparse_token_list_128 = [303,110,36]
+sparse_token_list_64 = [66,30,17]              
 
-def attn_postprocess_rank(self_attn_weights, v_token_start, v_token_num, text_token_start, t_token_idx, scale, bias):
+def attn_fastv(self_attn_weights, v_token_start, v_token_num, text_token_start, t_token_idx, layer_idx):
+    '''
+    self_attn_weights: [B, H, L, L]
+    '''
+
+    # FastV
+    s_flag = False
+    self_attn_weights = self_attn_weights.mean(1) # B, L[Q], L[K]
+    relation_vis_text = self_attn_weights[:, :, v_token_start: v_token_start+v_token_num] # B, L2, L1
+    relation_vis_text = relation_vis_text.mean(1) # B, L1
+    mask = torch.zeros_like(relation_vis_text, dtype=bool) 
+    _, indices = torch.topk(relation_vis_text, 114, dim=1) # 180, 114, 48
+    mask[0][indices] = 1
+
+    return mask, s_flag, relation_vis_text
+
+def attn_postprocess_topk(self_attn_weights, v_token_start, v_token_num, text_token_start, t_token_idx, layer_idx):
     '''
     self_attn_weights: [B, H, L, L]
     '''
     self_attn_weights = self_attn_weights.mean(1) # B, L[Q], L[K]
 
     t_token_idx = t_token_idx[1] + text_token_start
-    relation_vis_text = self_attn_weights[:, t_token_idx, v_token_start: v_token_start+v_token_num] # B, L2, L1
-
-    rank = torch.linalg.matrix_rank(relation_vis_text.float()) # rank
+    relation_vis_text = self_attn_weights[:, t_token_idx , v_token_start: v_token_start+v_token_num] # B, L2, L1
+    rank = 0
     relation_vis_text = relation_vis_text.mean(1) # B, L1
 
-    s_flag = True # layer needs sparsification or not
-    if v_token_num - rank.item() != 0:
-        mask = torch.zeros_like(relation_vis_text, dtype=bool)
-        _, indices = torch.topk(relation_vis_text, min(int(rank.item() * scale + bias), v_token_num - 1), dim=1)
+    relation_vis = relation_vis_text
+    s_flag = True
+    # if v_token_num - rank.item() != 0:
+    if v_token_num - rank != 0:
+        mask = torch.zeros_like(relation_vis, dtype=bool)
+        _, indices = torch.topk(relation_vis, min(sparse_token_list_128[layer_dict[layer_idx]], v_token_num - 1), dim=1) # v_token_num-rank.item()
         mask[0][indices] = 1
     else:
         mask = torch.ones_like(relation_vis_text, dtype=bool)
         s_flag = False
-
     return mask, s_flag, relation_vis_text
+
+if __name__ == "__main__":
+
+    self_attn_weights, v_token_start, v_token_num, text_token_start = torch.rand(4, 16, 1084, 1084), 36, 576, 700
+    mask = attn_postprocess(self_attn_weights, v_token_start, v_token_num, text_token_start)
+    print(mask.shape)

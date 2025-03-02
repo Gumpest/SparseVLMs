@@ -11,7 +11,8 @@ from llava.model.builder import load_pretrained_model
 from llava.utils import disable_torch_init
 from llava.mm_utils import tokenizer_image_token, process_images, get_model_name_from_path
 from torch.utils.data import Dataset, DataLoader
-
+import logging
+import datetime
 from PIL import Image
 import math
 
@@ -75,13 +76,35 @@ def create_data_loader(questions, image_folder, tokenizer, image_processor, mode
     data_loader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, shuffle=False, collate_fn=collate_fn)
     return data_loader
 
+def track_gpu_memory_usage(func):
+    """
+        装饰器函数,用于跟踪被装饰函数运行过程中的GPU显存占用情况,并输出峰值
+    """
+    def wrapper(*args, **kwargs):
+        if torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
 
+            result = func(*args, **kwargs)
+
+            peak_allocated = torch.cuda.max_memory_allocated() / (1024 * 1024)
+            peak_reserved = torch.cuda.max_memory_reserved() / (1024 * 1024)
+
+            print(f"已分配显存峰值: {peak_allocated:.2f} MB")
+            print(f"保留显存峰值: {peak_reserved:.2f} MB")
+
+            return result
+        else:
+            print("GPU不可用,无法统计显存占用情况。")
+            return func(*args, **kwargs)
+
+    return wrapper
+@track_gpu_memory_usage
 def eval_model(args):
     # Model
     disable_torch_init()
     model_path = os.path.expanduser(args.model_path)
     model_name = get_model_name_from_path(model_path)
-    tokenizer, model, image_processor, context_len = load_pretrained_model(model_path, args.model_base, model_name, args.sparse)
+    tokenizer, model, image_processor, context_len = load_pretrained_model(model_path, args.model_base, model_name)
 
     questions = [json.loads(q) for q in open(os.path.expanduser(args.question_file), "r")]
     questions = get_chunk(questions, args.num_chunks, args.chunk_idx)
@@ -94,38 +117,42 @@ def eval_model(args):
         print(f'It seems that this is a plain model, but it is not using a mmtag prompt, auto switching to {args.conv_mode}.')
 
     data_loader = create_data_loader(questions, args.image_folder, tokenizer, image_processor, model.config)
+    
+    # 按路径分隔符 / 分割字符串
+    path_parts = args.question_file.split("/")
+    # 获取倒数第二个部分
+    benchmark_name = path_parts[-2]
+    logger = logging.getLogger(benchmark_name)
+    logger.setLevel(logging.INFO)
 
+    sparse_token = 576
+    log_path = "/home/chunkui.mjp/notebook/code/LLaVA/logs/{}".format(benchmark_name)
+    # log_path = "/mnt/bn/bes-mllm-shared/SparseVLM/logs/ablation/{}".format(benchmark_name)
+    # 判断文件夹是否存在
+    if not os.path.exists(log_path):
+        # 若不存在，则创建文件夹
+        os.makedirs(log_path)
+    
+    # 创建一个文件处理器
+    file_handler = logging.FileHandler('{}/all_token_{}.log'.format(log_path,sparse_token))
+    logger.addHandler(file_handler)
     for (input_ids, image_tensor, image_sizes), line in tqdm(zip(data_loader, questions), total=len(questions)):
         idx = line["question_id"]
         cur_prompt = line["text"]
 
         input_ids = input_ids.to(device='cuda', non_blocking=True)
         with torch.inference_mode():
-            if args.sparse:
-                output_ids = model.generate(
-                    args.scale,
-                    args.bias,
-                    input_ids,
-                    images=image_tensor.to(dtype=torch.float16, device='cuda', non_blocking=True),
-                    image_sizes=image_sizes,
-                    do_sample=True if args.temperature > 0 else False,
-                    temperature=args.temperature,
-                    top_p=args.top_p,
-                    num_beams=args.num_beams,
-                    max_new_tokens=args.max_new_tokens,
-                    use_cache=True)
-            else:
-                output_ids = model.generate(
-                    input_ids,
-                    images=image_tensor.to(dtype=torch.float16, device='cuda', non_blocking=True),
-                    image_sizes=image_sizes,
-                    do_sample=True if args.temperature > 0 else False,
-                    temperature=args.temperature,
-                    top_p=args.top_p,
-                    num_beams=args.num_beams,
-                    max_new_tokens=args.max_new_tokens,
-                    use_cache=True)
-
+            output_ids = model.generate(
+                input_ids,
+                images=image_tensor.to(dtype=torch.float16, device='cuda', non_blocking=True),
+                image_sizes=image_sizes,
+                logger = logger,
+                do_sample=True if args.temperature > 0 else False,
+                temperature=args.temperature,
+                top_p=args.top_p,
+                num_beams=args.num_beams,
+                max_new_tokens=args.max_new_tokens,
+                use_cache=True)
         outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0].strip()
 
         ans_id = shortuuid.uuid()
@@ -152,10 +179,6 @@ if __name__ == "__main__":
     parser.add_argument("--top_p", type=float, default=None)
     parser.add_argument("--num_beams", type=int, default=1)
     parser.add_argument("--max_new_tokens", type=int, default=128)
-    
-    parser.add_argument("--sparse", action="store_true", help="sparse flag")
-    parser.add_argument("--scale", type=float, default=13.5)
-    parser.add_argument("--bias", type=float, default=0)
     args = parser.parse_args()
 
     eval_model(args)
