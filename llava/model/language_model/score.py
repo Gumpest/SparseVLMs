@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 layer_dict = {2:0,6:1,15:2}
-sparse_token_list_192 = [300,200,110]       # 2*576  4*300 10*200  16*118
+sparse_token_list_192 = [300,200,110]       # 2*576  4*300 10*200  16*110
 sparse_token_list_128 = [303,110,36]
 sparse_token_list_64 = [66,30,17]          
 
