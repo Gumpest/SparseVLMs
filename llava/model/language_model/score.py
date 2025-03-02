@@ -5,23 +5,7 @@ import torch.nn.functional as F
 layer_dict = {2:0,6:1,15:2}
 sparse_token_list_192 = [300,200,110]       # 2*576  4*300 10*200  16*118
 sparse_token_list_128 = [303,110,36]
-sparse_token_list_64 = [66,30,17]              
-
-def attn_fastv(self_attn_weights, v_token_start, v_token_num, text_token_start, t_token_idx, layer_idx):
-    '''
-    self_attn_weights: [B, H, L, L]
-    '''
-
-    # FastV
-    s_flag = False
-    self_attn_weights = self_attn_weights.mean(1) # B, L[Q], L[K]
-    relation_vis_text = self_attn_weights[:, :, v_token_start: v_token_start+v_token_num] # B, L2, L1
-    relation_vis_text = relation_vis_text.mean(1) # B, L1
-    mask = torch.zeros_like(relation_vis_text, dtype=bool) 
-    _, indices = torch.topk(relation_vis_text, 114, dim=1) # 180, 114, 48
-    mask[0][indices] = 1
-
-    return mask, s_flag, relation_vis_text
+sparse_token_list_64 = [66,30,17]          
 
 def attn_postprocess_topk(self_attn_weights, v_token_start, v_token_num, text_token_start, t_token_idx, layer_idx):
     '''
@@ -49,5 +33,5 @@ def attn_postprocess_topk(self_attn_weights, v_token_start, v_token_num, text_to
 if __name__ == "__main__":
 
     self_attn_weights, v_token_start, v_token_num, text_token_start = torch.rand(4, 16, 1084, 1084), 36, 576, 700
-    mask = attn_postprocess(self_attn_weights, v_token_start, v_token_num, text_token_start)
+    mask = attn_postprocess_topk(self_attn_weights, v_token_start, v_token_num, text_token_start)
     print(mask.shape)
