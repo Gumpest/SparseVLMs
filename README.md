@@ -71,7 +71,7 @@ pip install flash_attn==2.3.3
 Please follow the detailed instruction in [LLaVA-Evaluation](https://github.com/haotian-liu/LLaVA/blob/main/docs/Evaluation.md).
 
 ## 🎯 Usage
-Specifically, `--retained_tokens` in script indicates the number of tokens to be retained after the SparseVLM algorithm. It supports three numbers of tokens, including 192, 128, and 64. If a specific number of tokens is required, please make modifications in ./llava/model/language_model/score.py
+Specifically, `--retained_tokens` in script indicates the number of tokens to be retained after the SparseVLM algorithm. It supports three numbers of tokens, including **192, 128, and 64**. If a specific number of tokens is required, please make modifications in ./llava/model/language_model/score.py
 
 1. Example for evaluating MME results (default 192 tokens):
 ```Shell
