@@ -62,6 +62,8 @@ cd SparseVLMs
 conda create -n SparseVLMs python=3.10 -y
 conda activate SparseVLMs
 pip install -e .
+pip install transformers==4.37.0
+pip install flash_attn==2.3.3
 ```
 
 3. Download Multimodal Benchmark
@@ -69,25 +71,34 @@ pip install -e .
 Please follow the detailed instruction in [LLaVA-Evaluation](https://github.com/haotian-liu/LLaVA/blob/main/docs/Evaluation.md).
 
 ## 🎯 Usage
-Specifically, `--sparse` in script indicates whether to perform sparseness, while `--scale` and `--bias` control the degree of token sparsity.
+Specifically, `--retained_tokens` in script indicates the number of tokens to be retained after the SparseVLM algorithm. It supports three numbers of tokens, including 192, 128, and 64. If a specific number of tokens is required, please make modifications in ./llava/model/language_model/score.py
 
-1. Example for evaluating MME results (192 tokens, scale = 13.5, bias = 0.0):
+1. Example for evaluating MME results (default 192 tokens):
 ```Shell
 CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/mme.sh
 ```
 
-2. Example for evaluating POPE results (128 tokens, scale = 9, bias = 6):
+2. Example for evaluating POPE results (default 192 tokens):
 ```Shell
 CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/pope.sh
 ```
 
-3. Example for evaluating TextVQA results (64 tokens, scale = 0.8, bias = 0.0):
+3. Example for evaluating ScienceQA results (default 192 tokens):
+```Shell
+CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/sqa.sh
+```
+
+4. Example for evaluating TextVQA results (default 192 tokens):
 ```Shell
 CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/textvqa.sh
 ```
 
-## License
+5. Example for evaluating MMBench results (default 192 tokens):
+```Shell
+CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/mmbench.sh
+```
 
+## License
 This project is released under the [Apache 2.0 license](LICENSE).
 
 ## Citation
