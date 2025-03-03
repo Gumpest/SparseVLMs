@@ -403,15 +403,14 @@ class LlavaMetaForCausalLM(ABC):
             labels = torch.full_like(input_ids, IGNORE_INDEX)
 
         # remove the padding using attention_mask -- FIXME
-        # 决定哪些部分需要被mask掉
         _input_ids = input_ids
         input_ids = [cur_input_ids[cur_attention_mask] for cur_input_ids, cur_attention_mask in zip(input_ids, attention_mask)]
         labels = [cur_labels[cur_attention_mask] for cur_labels, cur_attention_mask in zip(labels, attention_mask)]
         
-        new_input_embeds = []   # 下面那个大的for循环，也就是把pre_prompt_embedding , image_embedding , question_embedding给拼接起来
+        new_input_embeds = []  
         new_labels = []
         cur_image_idx = 0
-        pre_prompt_length_list = []      # 记录哪些token是预先的prompt，这些token不进行稀疏化
+        pre_prompt_length_list = []     
         for batch_idx, cur_input_ids in enumerate(input_ids):
             num_images = (cur_input_ids == IMAGE_TOKEN_INDEX).sum()
             if num_images == 0:
@@ -422,20 +421,19 @@ class LlavaMetaForCausalLM(ABC):
                 new_labels.append(labels[batch_idx])
                 cur_image_idx += 1
                 continue
-            # 因为他input的格式是<pre_prompt><image><question>，<image>是一个分隔符，下面这行代码是为了找到<image>的位置,如[-1, 35, 93]
             image_token_indices = [-1] + torch.where(cur_input_ids == IMAGE_TOKEN_INDEX)[0].tolist() + [cur_input_ids.shape[0]] 
             pre_prompt_length_list.append(image_token_indices[1])
-            cur_input_ids_noim = [] # 以列表的方式存入input，将<image>分隔符删除，也即[ <pre_prompt> , <question> ]
+            cur_input_ids_noim = [] 
             cur_labels = labels[batch_idx]
-            cur_labels_noim = []    # 以列表的方式存入label，将<image>分隔符删除，也即[ <pre_prompt> , <question> ]
+            cur_labels_noim = []
             for i in range(len(image_token_indices) - 1):
                 cur_input_ids_noim.append(cur_input_ids[image_token_indices[i]+1:image_token_indices[i+1]])
                 cur_labels_noim.append(cur_labels[image_token_indices[i]+1:image_token_indices[i+1]])
             split_sizes = [x.shape[0] for x in cur_labels_noim] # [35, 57]
-            cur_input_embeds = self.get_model().embed_tokens(torch.cat(cur_input_ids_noim)) # 相当于不对<image>这个标识符进行embedding，torch.Size([92, 4096])
-            cur_input_embeds_no_im = torch.split(cur_input_embeds, split_sizes, dim=0)  # 再将embedding分成<pre_prompt>、<question>两部分
-            cur_new_input_embeds = [] # 在for循环后变成[ pre_prompt_embedding , image_embedding , question_embedding ]，[35,576,57]
-            cur_new_labels = []     # 在for循环后变成[ pre_prompt_embedding , image_embedding , question_embedding ]，[35,576,57]
+            cur_input_embeds = self.get_model().embed_tokens(torch.cat(cur_input_ids_noim)) 
+            cur_input_embeds_no_im = torch.split(cur_input_embeds, split_sizes, dim=0) 
+            cur_new_input_embeds = [] 
+            cur_new_labels = []   
 
             for i in range(num_images + 1):
                 cur_new_input_embeds.append(cur_input_embeds_no_im[i])
@@ -443,13 +441,12 @@ class LlavaMetaForCausalLM(ABC):
                 if i < num_images:
                     cur_image_features = image_features[cur_image_idx]
                     cur_image_idx += 1
-                    cur_new_input_embeds.append(cur_image_features) # 之前不是没把那个<image>标识符给embedding嘛，其实就是为了这一步，把<image>标识符换成真正的image_features
+                    cur_new_input_embeds.append(cur_image_features) 
                     cur_new_labels.append(torch.full((cur_image_features.shape[0],), IGNORE_INDEX, device=cur_labels.device, dtype=cur_labels.dtype))
-                    # 把这个image_features对应的label全部设为IGNORE_INDEX
             cur_new_input_embeds = [x.to(self.device) for x in cur_new_input_embeds]    
 
-            cur_new_input_embeds = torch.cat(cur_new_input_embeds)  # 把他们拼接成一个tensor
-            cur_new_labels = torch.cat(cur_new_labels) # 把他们拼接成一个tensor
+            cur_new_input_embeds = torch.cat(cur_new_input_embeds)  
+            cur_new_labels = torch.cat(cur_new_labels) 
 
             new_input_embeds.append(cur_new_input_embeds)
             new_labels.append(cur_new_labels)
@@ -460,15 +457,14 @@ class LlavaMetaForCausalLM(ABC):
             new_input_embeds = [x[:tokenizer_model_max_length] for x in new_input_embeds]
             new_labels = [x[:tokenizer_model_max_length] for x in new_labels]
 
-        # Combine them      下面这部分代码主要是，把一个batch内的input填充到相同的维度，比如有的input是[1,4096],有的是[668,4096],那么就将他们都填充到[668,4096]
+        # Combine them      
         max_len = max(x.shape[0] for x in new_input_embeds)
         batch_size = len(new_input_embeds)
-        #  用IGNORE_INDEX填充label，用0填充attention_mask和position_ids
         new_input_embeds_padded = []
         new_labels_padded = torch.full((batch_size, max_len), IGNORE_INDEX, dtype=new_labels[0].dtype, device=new_labels[0].device)
         attention_mask = torch.zeros((batch_size, max_len), dtype=attention_mask.dtype, device=attention_mask.device)
         position_ids = torch.zeros((batch_size, max_len), dtype=position_ids.dtype, device=position_ids.device)
-        token_length_list = []      # 这个list是为了后续把填充的token给mask掉
+        token_length_list = []  
         for i, (cur_new_embed, cur_new_labels) in enumerate(zip(new_input_embeds, new_labels)):
             cur_len = cur_new_embed.shape[0]
             token_length_list.append(cur_len)
@@ -491,7 +487,7 @@ class LlavaMetaForCausalLM(ABC):
                     attention_mask[i, :cur_len] = True
                     position_ids[i, :cur_len] = torch.arange(0, cur_len, dtype=position_ids.dtype, device=position_ids.device)
 
-        new_input_embeds = torch.stack(new_input_embeds_padded, dim=0)  # 把列表里的元素拼接
+        new_input_embeds = torch.stack(new_input_embeds_padded, dim=0)  
 
         if _labels is None:
             new_labels = None
@@ -508,7 +504,7 @@ class LlavaMetaForCausalLM(ABC):
         self.image_shape = image_features.shape[1]
         self.token_length_list = token_length_list
         self.pre_prompt_length_list = pre_prompt_length_list
-        self.model.init_token_total_shape = max_len       # 这个参数用于初始化policy
+        self.model.init_token_total_shape = max_len      
 # attention_mask.shape：torch.Size([1, 668])，new_input_embeds.shape：torch.Size([1, 668, 4096])，new_labels.shape：torch.Size([1, 668])
         return None, position_ids, attention_mask, past_key_values, new_input_embeds, new_labels,image_features.shape[1],token_length_list,pre_prompt_length_list
 

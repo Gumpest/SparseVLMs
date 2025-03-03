@@ -112,7 +112,7 @@ class LlamaDynamicvitModel(LlamaModel):
         image_shape=576,
         token_length_list=[],
         pre_prompt_length_list = [],
-        logger = [],
+        retained_tokens = 192,
     ) -> Union[Tuple, BaseModelOutputWithPast]:
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
         output_hidden_states = (
@@ -264,7 +264,7 @@ class LlamaDynamicvitModel(LlamaModel):
 
                     attn_logits = layer_outputs[2]
                     
-                    pred_score_vis, s_flag, relation_vis_text = attn_postprocess_topk(attn_logits, v_token_start, v_token_num, text_token_start, t_token_idx, layer_idx) # B, L_v
+                    pred_score_vis, s_flag, relation_vis_text = attn_postprocess_topk(attn_logits, v_token_start, v_token_num, text_token_start, t_token_idx, layer_idx,retained_tokens) # B, L_v
                     policy = torch.ones(B, hidden_states.shape[1], dtype=hidden_states.dtype, device=hidden_states.device)
                     policy[:, v_token_start:text_token_start] = pred_score_vis.type(dtype = hidden_states.dtype)
 
@@ -370,7 +370,7 @@ class LlamaDynamicvitModel(LlamaModel):
             self.num_forward += 1
             self.num_token_pool += (sum(num_token) / self.num_layers)
             FLOPs_avg_sample = (self.all_FLOPs / self.num_forward) * 1e-12
-            logger.info(f"equal token num utill now: {self.num_token_pool / self.num_forward} ,total_layers_cuda_time:{self.total_cuda_time},TFLOPs_avg_sample:{FLOPs_avg_sample}")
+            print(f"equal token num until now: {self.num_token_pool / self.num_forward} ,total_layers_cuda_time:{self.total_cuda_time},TFLOPs_avg_sample:{FLOPs_avg_sample}")
     
         hidden_states = self.norm(hidden_states)
 
@@ -984,7 +984,7 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
         image_shape=576,
         token_length_list=[],
         pre_prompt_length_list = [],
-        logger = [],
+        retained_tokens = 192,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
         output_hidden_states = (
@@ -1006,7 +1006,7 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
             image_shape=image_shape,
             token_length_list = token_length_list,
             pre_prompt_length_list = pre_prompt_length_list,
-            logger = logger
+            retained_tokens = retained_tokens
         )
 
         prev_decision = outputs[0]
@@ -1064,7 +1064,7 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
         image_shape=576,
         token_length_list=[],
         pre_prompt_length_list = [],
-        logger = [],
+        retained_tokens = 192,
         **kwargs,
     ) -> Union[GenerateOutput, torch.LongTensor]:
         if synced_gpus is None:
@@ -1285,7 +1285,7 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
                 image_shape = image_shape,
                 token_length_list = token_length_list,
                 pre_prompt_length_list = pre_prompt_length_list,
-                logger = logger,
+                retained_tokens = retained_tokens,
                 **model_kwargs,
             )
 
@@ -1528,7 +1528,7 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
         image_shape = 576,
         token_length_list = [],
         pre_prompt_length_list = [],
-        logger = [],
+        retained_tokens = 192,
         **model_kwargs,
     ) -> Union[GenerateNonBeamOutput, torch.LongTensor]:
         r"""
@@ -1697,7 +1697,7 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
                 image_shape = image_shape,
                 token_length_list = token_length_list,
                 pre_prompt_length_list = pre_prompt_length_list,
-                logger = logger,
+                retained_tokens = retained_tokens,
             )
             outputs = outputs[2]
             if synced_gpus and this_peer_finished:
@@ -1767,8 +1767,7 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
         causal_inference_cuda_time_ms = causal_inference_start_event.elapsed_time(causal_inference_end_event)
         self.model.causal_inference_cuda_time += causal_inference_cuda_time_ms
         # FLOPs_avg = all_FLOPs /self.num_layers
-        logger.info(f"causal_inference_cuda_time:{self.model.causal_inference_cuda_time}")
-
+        # print(f"total_causal_inference_cuda_time:{self.model.causal_inference_cuda_time}")
         if streamer is not None:
             streamer.end()
 

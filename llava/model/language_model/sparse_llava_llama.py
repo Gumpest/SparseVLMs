@@ -61,7 +61,7 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
         image_shape = 576,
         token_length_list = [],
         pre_prompt_length_list = [],
-        logger = [],
+        retained_tokens = 192,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
 
         if inputs_embeds is None:
@@ -99,7 +99,7 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
             image_shape = image_shape,
             token_length_list = token_length_list,
             pre_prompt_length_list = pre_prompt_length_list,
-            logger=logger
+            retained_tokens=retained_tokens
         )
 
     @torch.no_grad()
@@ -108,7 +108,7 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
         inputs: Optional[torch.Tensor] = None,
         images: Optional[torch.Tensor] = None,
         image_sizes: Optional[torch.Tensor] = None,
-        logger = [],
+        retained_tokens = 192,
         image_shape=576,
         token_length_list = [],
         pre_prompt_length_list = [],
@@ -149,7 +149,7 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
             image_shape = image_shape,        
             token_length_list = token_length_list,  
             pre_prompt_length_list = pre_prompt_length_list,     
-            logger = logger,
+            retained_tokens = retained_tokens,
             **kwargs
         )
 
