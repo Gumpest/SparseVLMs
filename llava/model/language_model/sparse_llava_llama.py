@@ -19,7 +19,6 @@ from .llava_llama import LlavaLlamaModel
 class LlavaConfig(LlamaConfig):
     model_type = "llava_llama"
 
-
 class LlavaLlamaDynamicModel(LlavaMetaModel, LlamaDynamicvitModel):
     config_class = LlavaConfig
 
@@ -62,8 +61,7 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
         image_shape = 576,
         token_length_list = [],
         pre_prompt_length_list = [],
-        scale = 13.5,
-        bias = 0.0,
+        retained_tokens = 192,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
 
         if inputs_embeds is None:
@@ -76,7 +74,7 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
                 labels,              # torch.Size([1, 668])
                 image_shape,        
                 token_length_list,  
-                pre_prompt_length_list,
+                pre_prompt_length_list,     
             ) = self.prepare_sparse_inputs_labels_for_multimodal(
                 input_ids,
                 position_ids,
@@ -101,19 +99,17 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
             image_shape = image_shape,
             token_length_list = token_length_list,
             pre_prompt_length_list = pre_prompt_length_list,
-            scale = scale,
-            bias = bias
+            retained_tokens=retained_tokens
         )
 
     @torch.no_grad()
     def generate(
         self,
-        scale,
-        bias,
         inputs: Optional[torch.Tensor] = None,
         images: Optional[torch.Tensor] = None,
         image_sizes: Optional[torch.Tensor] = None,
-        image_shape = 576,
+        retained_tokens = 192,
+        image_shape=576,
         token_length_list = [],
         pre_prompt_length_list = [],
         **kwargs,
@@ -131,10 +127,10 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
                 _,
                 inputs_embeds,
                 _,
-                image_shape, 
-                token_length_list,
-                pre_prompt_length_list,
-            ) = self.prepare_sparse_inputs_labels_for_multimodal(
+                image_shape,        
+                token_length_list,  
+                pre_prompt_length_list,     
+            ) = self.prepare_sparse_inputs_labels_for_multimodal(       
                 inputs,
                 position_ids,
                 attention_mask,
@@ -149,12 +145,11 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
         return super().generate(
             position_ids=position_ids,
             attention_mask=attention_mask,
-            inputs_embeds=inputs_embeds,
-            image_shape=image_shape,
-            token_length_list=token_length_list,
-            pre_prompt_length_list=pre_prompt_length_list,
-            scale=scale,
-            bias=bias,
+            inputs_embeds=inputs_embeds,        # torch.Size([1, 664, 2048])
+            image_shape = image_shape,        
+            token_length_list = token_length_list,  
+            pre_prompt_length_list = pre_prompt_length_list,     
+            retained_tokens = retained_tokens,
             **kwargs
         )
 

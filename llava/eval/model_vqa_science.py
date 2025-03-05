@@ -38,6 +38,9 @@ def eval_model(args):
     answers_file = os.path.expanduser(args.answers_file)
     os.makedirs(os.path.dirname(answers_file), exist_ok=True)
     ans_file = open(answers_file, "w")
+
+    retained_tokens = args.retained_tokens
+
     for i, line in enumerate(tqdm(questions)):
         idx = line["id"]
         question = line['conversations'][0]
@@ -75,6 +78,7 @@ def eval_model(args):
                 input_ids,
                 images=images,
                 image_sizes=image_sizes,
+                retained_tokens = retained_tokens,
                 do_sample=True if args.temperature > 0 else False,
                 temperature=args.temperature,
                 max_new_tokens=1024,
@@ -106,6 +110,7 @@ if __name__ == "__main__":
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--answer-prompter", action="store_true")
     parser.add_argument("--single-pred-prompt", action="store_true")
+    parser.add_argument("--retained_tokens", type=int, default=192)
     args = parser.parse_args()
 
     eval_model(args)

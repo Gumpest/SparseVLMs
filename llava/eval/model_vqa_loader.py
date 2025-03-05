@@ -11,7 +11,8 @@ from llava.model.builder import load_pretrained_model
 from llava.utils import disable_torch_init
 from llava.mm_utils import tokenizer_image_token, process_images, get_model_name_from_path
 from torch.utils.data import Dataset, DataLoader
-
+import logging
+import datetime
 from PIL import Image
 import math
 
@@ -75,13 +76,12 @@ def create_data_loader(questions, image_folder, tokenizer, image_processor, mode
     data_loader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, shuffle=False, collate_fn=collate_fn)
     return data_loader
 
-
 def eval_model(args):
     # Model
     disable_torch_init()
     model_path = os.path.expanduser(args.model_path)
     model_name = get_model_name_from_path(model_path)
-    tokenizer, model, image_processor, context_len = load_pretrained_model(model_path, args.model_base, model_name, args.sparse)
+    tokenizer, model, image_processor, context_len = load_pretrained_model(model_path, args.model_base, model_name)
 
     questions = [json.loads(q) for q in open(os.path.expanduser(args.question_file), "r")]
     questions = get_chunk(questions, args.num_chunks, args.chunk_idx)
@@ -94,38 +94,25 @@ def eval_model(args):
         print(f'It seems that this is a plain model, but it is not using a mmtag prompt, auto switching to {args.conv_mode}.')
 
     data_loader = create_data_loader(questions, args.image_folder, tokenizer, image_processor, model.config)
-
+    
+    retained_tokens = args.retained_tokens
     for (input_ids, image_tensor, image_sizes), line in tqdm(zip(data_loader, questions), total=len(questions)):
         idx = line["question_id"]
         cur_prompt = line["text"]
 
         input_ids = input_ids.to(device='cuda', non_blocking=True)
         with torch.inference_mode():
-            if args.sparse:
-                output_ids = model.generate(
-                    args.scale,
-                    args.bias,
-                    input_ids,
-                    images=image_tensor.to(dtype=torch.float16, device='cuda', non_blocking=True),
-                    image_sizes=image_sizes,
-                    do_sample=True if args.temperature > 0 else False,
-                    temperature=args.temperature,
-                    top_p=args.top_p,
-                    num_beams=args.num_beams,
-                    max_new_tokens=args.max_new_tokens,
-                    use_cache=True)
-            else:
-                output_ids = model.generate(
-                    input_ids,
-                    images=image_tensor.to(dtype=torch.float16, device='cuda', non_blocking=True),
-                    image_sizes=image_sizes,
-                    do_sample=True if args.temperature > 0 else False,
-                    temperature=args.temperature,
-                    top_p=args.top_p,
-                    num_beams=args.num_beams,
-                    max_new_tokens=args.max_new_tokens,
-                    use_cache=True)
-
+            output_ids = model.generate(
+                input_ids,
+                images=image_tensor.to(dtype=torch.float16, device='cuda', non_blocking=True),
+                image_sizes=image_sizes,
+                retained_tokens = retained_tokens,
+                do_sample=True if args.temperature > 0 else False,
+                temperature=args.temperature,
+                top_p=args.top_p,
+                num_beams=args.num_beams,
+                max_new_tokens=args.max_new_tokens,
+                use_cache=True)
         outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0].strip()
 
         ans_id = shortuuid.uuid()
@@ -152,10 +139,7 @@ if __name__ == "__main__":
     parser.add_argument("--top_p", type=float, default=None)
     parser.add_argument("--num_beams", type=int, default=1)
     parser.add_argument("--max_new_tokens", type=int, default=128)
-    
-    parser.add_argument("--sparse", action="store_true", help="sparse flag")
-    parser.add_argument("--scale", type=float, default=13.5)
-    parser.add_argument("--bias", type=float, default=0)
+    parser.add_argument("--retained_tokens", type=int, default=192)
     args = parser.parse_args()
 
     eval_model(args)

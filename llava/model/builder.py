@@ -1,18 +1,3 @@
-#    Copyright 2023 Haotian Liu
-#
-#    Licensed under the Apache License, Version 2.0 (the "License");
-#    you may not use this file except in compliance with the License.
-#    You may obtain a copy of the License at
-#
-#        http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS,
-#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#    See the License for the specific language governing permissions and
-#    limitations under the License.
-
-
 import os
 import warnings
 import shutil
@@ -23,10 +8,12 @@ from llava.model import *
 from llava.constants import DEFAULT_IMAGE_PATCH_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
 
 import logging
+
+from llava.model.language_model.modelling_sparse_llama import LlamaDynamicvitFlashAttention2
 logging.basicConfig(level = logging.INFO, format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 eval_logger = logging.getLogger(__name__)
 
-def load_pretrained_model(model_path, model_base, model_name, dynamic_sparse, load_8bit=False, load_4bit=False, device_map="auto", device="cuda", use_flash_attn=False, **kwargs):
+def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, load_4bit=False, device_map="auto", device="cuda", use_flash_attn=False, dynamic_sparse=True, **kwargs):
     kwargs = {"device_map": device_map, **kwargs}
 
     if device != "cuda":
@@ -124,6 +111,14 @@ def load_pretrained_model(model_path, model_base, model_name, dynamic_sparse, lo
                         low_cpu_mem_usage=True,
                         **kwargs
                     )
+                    for i in range(32):
+                        flash_attn = LlamaDynamicvitFlashAttention2(config=model.config, layer_idx=i).half().to(device)
+                        model.model.layers[i].add_module("flash_attn",flash_attn)
+                        state_dict = model.model.layers[i].flash_attn.state_dict()
+                        for key in model.model.layers[i].self_attn.state_dict().keys():
+                            if key in state_dict.keys():
+                                state_dict[key] = model.model.layers[i].self_attn.state_dict()[key]
+                        model.model.layers[i].flash_attn.load_state_dict(state_dict)
                 else:
                     eval_logger.info("Start Normal Inference...")
                     model = LlavaLlamaForCausalLM.from_pretrained(
