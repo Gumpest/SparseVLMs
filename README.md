@@ -25,6 +25,8 @@
 </div>
 
 ## 📜 News 
+🔥 **[2025/06/04]** The sparsification code for **[VideoLLaVA](https://github.com/Gumpest/SparseVLMs/tree/video)** is now open source! Please check the `video branch`.
+
 🔥 **[2025/05/01]** Our SparseVLM is accepted by **ICML 2025**!
 
 🔥 **[2025/03/06]** We released **[SparseVLM v1.5](https://arxiv.org/pdf/2410.04417)**! **Higher Accuracy, Flexible Pruning Manner, and Compatibility with FlashAttention 2**!
