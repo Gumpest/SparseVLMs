@@ -2,9 +2,10 @@
 
 <h3 style="margin-bottom: 0; font-size: 1.5em;">
   SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference
-  <a href="https://arxiv.org/pdf/2410.04417">[Paper]</a>
-  <a href="https://github.com/Gumpest/SparseVLMs/tree/v1.5">[Code]</a>
 </h3>
+
+[![Paper](https://img.shields.io/badge/Paper-arXiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/pdf/2410.04417)
+[![Code](https://img.shields.io/badge/Code-GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gumpest/SparseVLMs/tree/v1.5)
 
 <p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
   <b><a href="https://gumpest.github.io/">Yuan Zhang</a></b><sup>1,3*</sup>,
@@ -22,9 +23,10 @@
 
 <h3 style="margin-bottom: 0; font-size: 1.5em;">
   SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern
-  <a href="https://arxiv.org/pdf/2410.04417">[Paper]</a>
-  <a href="https://github.com/Gumpest/SparseVLMs">[Code]</a>
 </h3>
+
+[![Paper](https://img.shields.io/badge/Paper-arXiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](#)
+[![Code](https://img.shields.io/badge/Code-GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gumpest/SparseVLMs)
 
 <p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
   <b><a href="https://gumpest.github.io/">Yuan Zhang</a></b><sup>1*</sup>,
