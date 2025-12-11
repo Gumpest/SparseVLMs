@@ -1,37 +1,37 @@
-# ⚡ SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference </h1>
+# SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference ⚡  </h1>
 
 
 
 **SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference** [[Paper](https://arxiv.org/pdf/2410.04417)] [[Code](https://github.com/Gumpest/SparseVLMs/tree/v1.5)] <br>
-[Yuan Zhang](https://gumpest.github.io/)<sup>1,3* </sup>,
-[Chun-Kai Fan](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1*</sup>,
-[Junpeng Ma]()<sup>2*</sup>,
-[Wenzhao Zheng](https://wzzheng.net/)<sup>3✉️</sup>,
-[Tao Huang](https://taohuang.info/)<sup>4</sup>,
-[Kuan Cheng](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>, <br>
-[Denis Gudovskiy]()<sup>5</sup>,
-[Tomoyuki Okuno]()<sup>5</sup>,
-[Yohei Nakata]()<sup>5</sup>,
-[Kurt Keutzer](http://people.eecs.berkeley.edu/~keutzer/)<sup>3</sup>,
-[Shanghang Zhang](https://idm.pku.edu.cn/info/1017/1598.htm)<sup>1✉️</sup>
+[**Yuan Zhang**](https://gumpest.github.io/)<sup>1,3* </sup>,
+[**Chun-Kai Fan**](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1*</sup>,
+[**Junpeng Ma**]()<sup>2*</sup>,
+[**Wenzhao Zheng**](https://wzzheng.net/)<sup>3✉️</sup>,
+[**Tao Huang**](https://taohuang.info/)<sup>4</sup>,
+[**Kuan Cheng**](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>, <br>
+[**Denis Gudovskiy**]()<sup>5</sup>,
+[**Tomoyuki Okuno**]()<sup>5</sup>,
+[**Yohei Nakata**]()<sup>5</sup>,
+[**Kurt Keutzer**](http://people.eecs.berkeley.edu/~keutzer/)<sup>3</sup>,
+[**Shanghang Zhang**](https://idm.pku.edu.cn/info/1017/1598.htm)<sup>1✉️</sup>
 
 **SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern** [[Paper]()] [[Code](https://github.com/Gumpest/SparseVLMs)] <br>
-[Yuan Zhang](https://gumpest.github.io/)<sup>1* </sup>,
-[Junpeng Ma]()<sup>1,2*</sup>,
-[QiZhe Zhang](https://scholar.google.com/citations?user=cdAi_uIAAAAJ&hl=zh-CN)<sup>1</sup>,
-[Chun-Kai Fan](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1</sup>,
-[Wenzhao Zheng](https://wzzheng.net/)<sup>3</sup>, <br>
-[Kuan Cheng](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>,
-[Jiwen Lu](https://scholar.google.com/citations?user=TN8uDQoAAAAJ&hl=en)<sup>6</sup>,
-[Shanghang Zhang](https://idm.pku.edu.cn/info/1017/1598.htm)<sup>1✉️</sup>
+[**Yuan Zhang**](https://gumpest.github.io/)<sup>1* </sup>,
+[**Junpeng Ma**]()<sup>1,2*</sup>,
+[**QiZhe Zhang**](https://scholar.google.com/citations?user=cdAi_uIAAAAJ&hl=zh-CN)<sup>1</sup>,
+[**Chun-Kai Fan**](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1</sup>,
+[**Wenzhao Zheng**](https://wzzheng.net/)<sup>3</sup>, <br>
+[**Kuan Cheng**](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>,
+[**Jiwen Lu**](https://scholar.google.com/citations?user=TN8uDQoAAAAJ&hl=en)<sup>6</sup>,
+[**Shanghang Zhang**](https://idm.pku.edu.cn/info/1017/1598.htm)<sup>1✉️</sup>
 
-<sup>1</sup>CS, Peking University, <sup>2</sup>Fudan University, <sup>3</sup>EECS, UC Berkeley,
+<sup>1</sup>**CS, Peking University**, <sup>2</sup>**Fudan University**, <sup>3</sup>**EECS, UC Berkeley**,
+<sup>4</sup>**The University of Sydney**, <sup>5</sup>**Panasonic**, <sup>6</sup>**Tsinghua University**
 
- <sup>4</sup>The University of Sydney, <sup>5</sup>Panasonic, <sup>6</sup>Tsinghua University
 
 
 ## 📜 News 
-🔥 **[2025/12/31]** We released new version **[SparseVLM+](https://arxiv.org/pdf/2410.04417)**! **Stronger Performance with Improved Text-Visual Attention Pattern**!
+🔥 **[2025/12/11]** We released new version **[SparseVLM+](https://arxiv.org/pdf/2410.04417)**! **Stronger Performance with Improved Text-Visual Attention Pattern**!
 
 🔥 **[2025/06/04]** The sparsification code for **[VideoLLaVA](https://github.com/Gumpest/SparseVLMs/tree/video)** is now open source! Please check the `video branch`.
 
