@@ -95,7 +95,6 @@ def eval_model(args):
 
     data_loader = create_data_loader(questions, args.image_folder, tokenizer, image_processor, model.config)
     
-    retained_tokens = args.retained_tokens
     for (input_ids, image_tensor, image_sizes), line in tqdm(zip(data_loader, questions), total=len(questions)):
         idx = line["question_id"]
         cur_prompt = line["text"]
@@ -106,7 +105,6 @@ def eval_model(args):
                 input_ids,
                 images=image_tensor.to(dtype=torch.float16, device='cuda', non_blocking=True),
                 image_sizes=image_sizes,
-                retained_tokens = retained_tokens,
                 do_sample=True if args.temperature > 0 else False,
                 temperature=args.temperature,
                 top_p=args.top_p,
@@ -139,7 +137,6 @@ if __name__ == "__main__":
     parser.add_argument("--top_p", type=float, default=None)
     parser.add_argument("--num_beams", type=int, default=1)
     parser.add_argument("--max_new_tokens", type=int, default=128)
-    parser.add_argument("--retained_tokens", type=int, default=192)
     args = parser.parse_args()
 
     eval_model(args)

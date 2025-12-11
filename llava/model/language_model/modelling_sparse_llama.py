@@ -11,7 +11,7 @@ import torch.nn.functional as F
 from transformers.cache_utils import Cache, DynamicCache
 from transformers.integrations.deepspeed import is_deepspeed_zero3_enabled
 from transformers.modeling_outputs import CausalLMOutputWithPast, Seq2SeqLMOutput
-from transformers.utils import ExplicitEnum, ModelOutput, is_accelerate_available, logging
+from transformers.utils import ExplicitEnum, ModelOutput, is_accelerate_available
 from transformers.generation.beam_constraints import DisjunctiveConstraint, PhrasalConstraint
 from transformers.generation.beam_search import BeamScorer, BeamSearchScorer, ConstrainedBeamSearchScorer
 from transformers.generation.configuration_utils import GenerationConfig
@@ -44,6 +44,7 @@ from transformers.generation.utils import GenerateOutput
 from .utils import *
 from .score import *
 
+loggerinfo.info(f"USE_VERSION: {VERSION}")
 # Typing shortcuts
 GenerateNonBeamOutput = Union[GenerateDecoderOnlyOutput, GenerateEncoderDecoderOutput]
 GenerateBeamOutput = Union[GenerateBeamDecoderOnlyOutput, GenerateBeamEncoderDecoderOutput]
@@ -109,10 +110,10 @@ class LlamaDynamicvitModel(LlamaModel):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
-        image_shape=576,
-        token_length_list=[],
+        image_shape = 576,
+        token_length_list = [],
         pre_prompt_length_list = [],
-        retained_tokens = 192,
+        logger = [],
     ) -> Union[Tuple, BaseModelOutputWithPast]:
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
         output_hidden_states = (
@@ -151,7 +152,7 @@ class LlamaDynamicvitModel(LlamaModel):
             position_ids = torch.arange(
                 past_key_values_length, seq_length + past_key_values_length, dtype=torch.long, device=device
             )
-            position_ids = position_ids.unsqueeze(0)    # position_ids.shape：torch.Size([1, 668])，从0到667
+            position_ids = position_ids.unsqueeze(0)    # position_ids.shape：torch.Size([1, 668])
         # print(position_ids)
         if inputs_embeds is None:
             inputs_embeds = self.embed_tokens(input_ids)
@@ -182,7 +183,7 @@ class LlamaDynamicvitModel(LlamaModel):
         all_self_attns = () if output_attentions else None
         next_decoder_cache = None
 
-        # ------------------------------------------- Sparse--------------------------------------------
+        # ------------------------------------------- SparseVLM --------------------------------------------
         B, L, _ = hidden_states.shape
         idx_sprase_layer = 0
         out_pred_prob = None
@@ -194,27 +195,24 @@ class LlamaDynamicvitModel(LlamaModel):
         text_token_start = v_token_start + image_shape # 611
         v_token_num = image_shape
 
-        # if (len(pre_prompt_length_list) != 0 and hidden_states.shape[1] !=1):
-        # select text tokens
-        if (len(pre_prompt_length_list) != 0 and hidden_states.shape[1] !=1):
+        # Select Text Raters, from SparseVLM 3.2
+        if (len(pre_prompt_length_list) != 0 and hidden_states.shape[1] != 1):
             v_t = hidden_states[:, v_token_start: text_token_start, :]
             t_t = hidden_states[:, text_token_start: , :]
             m_v_t = v_t @ t_t.transpose(1, 2) # [1, 576, 53]
             m_v_t = m_v_t.softmax(2).mean(1) # [1, 53]
             t_token_idx = torch.where(m_v_t > m_v_t.mean())
 
-            num_token = []
-
         num_token = []
 
-        if (len(pre_prompt_length_list) != 0 and hidden_states.shape[1] !=1):
+        if (len(pre_prompt_length_list) != 0 and hidden_states.shape[1] != 1):
             total_start_event = torch.cuda.Event(enable_timing=True)
             total_end_event = torch.cuda.Event(enable_timing=True)
             torch.cuda.synchronize()
             total_start_event.record()
 
         for layer_idx, decoder_layer in enumerate(self.layers):
-            if (len(pre_prompt_length_list) != 0 and hidden_states.shape[1] !=1):       
+            if (len(pre_prompt_length_list) != 0 and hidden_states.shape[1] != 1):       
                 n = hidden_states.shape[1]                                  # token num
                 d = hidden_states.shape[2]                                  # hidden state size 
                 m = self.layers[layer_idx].mlp.up_proj.out_features         # intermediate size of the FFN
@@ -224,47 +222,41 @@ class LlamaDynamicvitModel(LlamaModel):
                 
                 # Training
                 if self.training:
-                    if self.gradient_checkpointing:
-                        layer_outputs = self._gradient_checkpointing_func(
-                            decoder_layer.__call__,
-                            hidden_states,  # torch.Size([1, 668, 4096])
-                            policy,
-                            attention_mask, # None
-                            position_ids,   # torch.Size([1, 668])
-                            past_key_values,    # None
-                            output_attentions,  # False
-                            use_cache,      # False
-                        )
-                    else :
-                        layer_outputs = decoder_layer(
-                            hidden_states,
-                            policy=policy,
-                            attention_mask=attention_mask,
-                            position_ids=position_ids,
-                            past_key_value=past_key_values,
-                            output_attentions=output_attentions,
-                            use_cache=use_cache,
-                        )
+                    pass
                 
                 # Inference
                 else:
                     layer_outputs = decoder_layer(
                             hidden_states = hidden_states,
                             policy=None,
-                            sparse_layer = True,
                             attention_mask=attention_mask,
                             position_ids=position_ids,
                             past_key_value=past_key_values,
                             output_attentions=output_attentions,
                             use_cache=use_cache,
-                            v_token_start = v_token_start,
-                            v_token_num = v_token_num,
-                            t_token_idx = t_token_idx,
                     )
 
                     attn_logits = layer_outputs[2]
+
+                    # Text-Visual Attention Gravity Correction, from SparseVLM+ 4.2
+                    if V2_0:
+                        bs, seq = hidden_states.shape[:2] # idea1: Compute Bias
+                        num_heads = decoder_layer.self_attn.num_heads
+                        head_dim = decoder_layer.self_attn.head_dim
+                        query_states = hidden_states.new_ones(bs, seq, num_heads, head_dim).transpose(1, 2)
+                        key_states = hidden_states.new_ones(bs, seq, num_heads, head_dim).transpose(1, 2)
+                        cos, sin = decoder_layer.self_attn.rotary_emb(key_states, seq_len=position_ids.max().item() + 1)
+                        query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
+                        rope_weights = torch.matmul(query_states, key_states.transpose(2, 3)) / math.sqrt(head_dim)
+                        attn_logits = attn_logits / rope_weights
+
+                    cur_text_token_idx = t_token_idx[1] + text_token_start
+
+                    # Text-Visual Priority Heads Selection, from SparseVLM+ 4.3
+                    if V2_0:
+                        attn_logits = select_attn_head_by_sum(attn_logits, cur_text_token_idx, v_token_start, text_token_start)
                     
-                    pred_score_vis, s_flag, relation_vis_text = attn_postprocess_topk(attn_logits, v_token_start, v_token_num, text_token_start, t_token_idx, layer_idx,retained_tokens) # B, L_v
+                    pred_score_vis, s_flag, relation_vis_text = attn_postprocess_topk(attn_logits, v_token_start, v_token_num, text_token_start, t_token_idx, layer_idx) # B, L_v
                     policy = torch.ones(B, hidden_states.shape[1], dtype=hidden_states.dtype, device=hidden_states.device)
                     policy[:, v_token_start:text_token_start] = pred_score_vis.type(dtype = hidden_states.dtype)
 
@@ -278,6 +270,8 @@ class LlamaDynamicvitModel(LlamaModel):
 
                     total_sparse_token_idx = torch.where(policy == 0)[1].unsqueeze(0)  
                     # merge and cluster
+                    if V2_0:
+                        s_flag = False # idea1: Cancel Merge
                     if s_flag and total_sparse_token_idx.shape[1]>0:
 
                         total_sparse_token_idx = torch.where(policy == 0)[1].unsqueeze(0)  
@@ -305,7 +299,7 @@ class LlamaDynamicvitModel(LlamaModel):
                         )
 
                         layer_outputs = (select_and_merge_token, layer_outputs[1])  # B, L, C
-                        position_ids = position_ids[:, :len(select_token_idx[0])+cluster_num]
+                        position_ids = position_ids[:, :len(select_token_idx[0]) + cluster_num]
                         prev_decision = policy
                         # update
                         v_token_num = pred_score_vis.sum() + cluster_num # B == 1
@@ -314,7 +308,10 @@ class LlamaDynamicvitModel(LlamaModel):
                     else:
                         select_token_idx = torch.where(policy == 1)[1].unsqueeze(0)  # B, L_new
                         layer_outputs = (batch_index_select(layer_outputs[0], select_token_idx), layer_outputs[1])  # B, L, C
-                        position_ids = position_ids[:, :len(select_token_idx[0])]
+                        if V2_0:
+                            position_ids = batch_index_select(position_ids, select_token_idx) # idea1: Keep Position ID
+                        else:
+                            position_ids = position_ids[:, :len(select_token_idx[0])]   
                         prev_decision = policy
                         
                         # update
@@ -343,7 +340,6 @@ class LlamaDynamicvitModel(LlamaModel):
                     layer_outputs = decoder_layer(
                         hidden_states,
                         policy=policy,
-                        sparse_layer = False,
                         attention_mask=attention_mask,
                         position_ids=position_ids,
                         past_key_value=past_key_values,
@@ -362,15 +358,17 @@ class LlamaDynamicvitModel(LlamaModel):
 
             num_token.append(v_token_num)
         
-        if len(pre_prompt_length_list) != 0 and hidden_states.shape[1] !=1:
+        if len(pre_prompt_length_list) != 0 and hidden_states.shape[1] != 1:
             total_end_event.record()
             torch.cuda.synchronize()  
+
             total_cuda_time_ms = total_start_event.elapsed_time(total_end_event)
             self.total_cuda_time += total_cuda_time_ms
             self.num_forward += 1
             self.num_token_pool += (sum(num_token) / self.num_layers)
             FLOPs_avg_sample = (self.all_FLOPs / self.num_forward) * 1e-12
-            print(f"equal token num until now: {self.num_token_pool / self.num_forward} ,total_layers_cuda_time:{self.total_cuda_time},TFLOPs_avg_sample:{FLOPs_avg_sample}")
+
+            loggerinfo.info(f"{prefix} Equal Tokens: {int(self.num_token_pool / self.num_forward)}, Prefill Time (ms): {self.total_cuda_time:.2f}, TFLOPs:{FLOPs_avg_sample:.2f}")
     
         hidden_states = self.norm(hidden_states)
 
@@ -614,7 +612,7 @@ class LlamaDynamicvitFlashAttention2(LlamaFlashAttention2):
         attn_output = attn_output.reshape(bsz, q_len, self.hidden_size).contiguous()
         attn_output = self.o_proj(attn_output)
 
-        return attn_output, attn_weights, past_key_value,attn_logits 
+        return attn_output, attn_weights, past_key_value, attn_logits 
 
 
 class LlamaDynamicvitSdpaAttention(LlamaSdpaAttention):
@@ -652,12 +650,16 @@ class LlamaDynamicvitSdpaAttention(LlamaSdpaAttention):
 
         kv_seq_len = key_states.shape[-2]
         # Change 
-        if len(position_ids[0]) == 1:
-            position_ids = torch.tensor([[past_key_value.get_usable_length(kv_seq_len, self.layer_idx)]], dtype=torch.int64).cuda()
+        if not V2_0:
+            if len(position_ids[0]) == 1:
+                position_ids = torch.tensor([[past_key_value.get_usable_length(kv_seq_len, self.layer_idx)]], dtype=torch.int64).cuda() # idea1: Delete it
 
         if past_key_value is not None:
             kv_seq_len += past_key_value.get_usable_length(kv_seq_len, self.layer_idx)
-        cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
+        if V2_0:
+            cos, sin = self.rotary_emb(value_states, seq_len=position_ids.max().item() + 1) # idea1: Keep Position ID
+        else:
+            cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
 
         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
 
@@ -675,6 +677,7 @@ class LlamaDynamicvitSdpaAttention(LlamaSdpaAttention):
                 )
 
         # SDPA with memory-efficient backend is currently (torch==2.1.2) bugged with non-contiguous inputs with custom attn_mask,
+        # Reference: https://github.com/pytorch/pytorch/issues/112577.
         if query_states.device.type == "cuda" and attention_mask is not None:
             query_states = query_states.contiguous()
             key_states = key_states.contiguous()
@@ -710,143 +713,20 @@ class LlamaDynamicvitSdpaAttention(LlamaSdpaAttention):
 
         return attn_output, None, past_key_value, attn_logits
 
-class LlamaSparseSdpaAttention(LlamaSdpaAttention):
-
-    def forward(
-        self,
-        hidden_states: torch.Tensor,
-        policy=None,
-        attention_mask: Optional[torch.Tensor] = None,
-        position_ids: Optional[torch.LongTensor] = None,
-        past_key_value: Optional[Cache] = None,
-        output_attentions: bool = False,
-        use_cache: bool = False,
-    ) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[Tuple[torch.Tensor]]]:
-        if output_attentions:
-            # TODO: Improve this warning with e.g. `model.config.attn_implementation = "manual"` once this is implemented.
-            return super().forward(
-                hidden_states=hidden_states,
-                attention_mask=attention_mask,
-                position_ids=position_ids,
-                past_key_value=past_key_value,
-                output_attentions=output_attentions,
-                use_cache=use_cache,
-            )
-
-        bsz, q_len, _ = hidden_states.size()
-
-        query_states = self.q_proj(hidden_states)
-        key_states = self.k_proj(hidden_states)
-        value_states = self.v_proj(hidden_states)
-
-        query_states = query_states.view(bsz, q_len, self.num_heads, self.head_dim).transpose(1, 2)
-        key_states = key_states.view(bsz, q_len, self.num_key_value_heads, self.head_dim).transpose(1, 2)
-        value_states = value_states.view(bsz, q_len, self.num_key_value_heads, self.head_dim).transpose(1, 2)
-
-        kv_seq_len = key_states.shape[-2]
-        # Change 
-        if len(position_ids[0]) == 1:
-            position_ids = torch.tensor([[past_key_value.get_usable_length(kv_seq_len, self.layer_idx)]], dtype=torch.int64).cuda()
-
-        if past_key_value is not None:
-            kv_seq_len += past_key_value.get_usable_length(kv_seq_len, self.layer_idx)
-        cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
-
-        query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
-
-        if past_key_value is not None:
-            cache_kwargs = {"sin": sin, "cos": cos}  # Specific to RoPE models
-            key_states, value_states = past_key_value.update(key_states, value_states, self.layer_idx, cache_kwargs)
-
-        key_states = repeat_kv(key_states, self.num_key_value_groups)
-
-        if attention_mask is not None:
-            if attention_mask.size() != (bsz, 1, q_len, kv_seq_len):
-                raise ValueError(
-                    f"Attention mask should be of size {(bsz, 1, q_len, kv_seq_len)}, but is {attention_mask.size()}"
-                )
-
-        # SDPA with memory-efficient backend is currently (torch==2.1.2) bugged with non-contiguous inputs with custom attn_mask,
-        if query_states.device.type == "cuda" and attention_mask is not None:
-            query_states = query_states.contiguous()
-            key_states = key_states.contiguous()
-            value_states = value_states.contiguous()
-
-        # Change
-        if not self.training:
-            attn_logits = sparse_scaled_dot_product_attention(
-                query_states,
-                key_states,
-                attn_mask=attention_mask,
-                dropout_p=self.attention_dropout if self.training else 0.0,
-                # The q_len > 1 is necessary to match with AttentionMaskConverter.to_causal_4d that does not create a causal mask in case q_len == 1.
-                is_causal=self.is_causal and attention_mask is None and q_len > 1,
-            )
-        else:
-            attn_output, attn_logits = scaled_dot_product_attention_with_policy(
-                query_states,
-                key_states,
-                value_states,
-                policy,
-                attn_mask=attention_mask,
-                dropout_p=self.attention_dropout if self.training else 0.0,
-                # The q_len > 1 is necessary to match with AttentionMaskConverter.to_causal_4d that does not create a causal mask in case q_len == 1.
-                is_causal=self.is_causal and attention_mask is None and q_len > 1
-            )
-
-        return attn_logits
-
-class LlamaSparseSdpaAttention2(LlamaSdpaAttention):
-
-    def forward(
-        self,
-        hidden_states: torch.Tensor,
-        policy=None,
-        attention_mask: Optional[torch.Tensor] = None,
-        position_ids: Optional[torch.LongTensor] = None,
-        past_key_value: Optional[Cache] = None,
-        output_attentions: bool = False,
-        use_cache: bool = False,
-    ) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[Tuple[torch.Tensor]]]:
-        if output_attentions:
-            # TODO: Improve this warning with e.g. `model.config.attn_implementation = "manual"` once this is implemented.
-            return super().forward(
-                hidden_states=hidden_states,
-                attention_mask=attention_mask,
-                position_ids=position_ids,
-                past_key_value=past_key_value,
-                output_attentions=output_attentions,
-                use_cache=use_cache,
-            )
-
-        bsz, q_len, _ = hidden_states.size()
-
-        query_states = self.q_proj(hidden_states)
-        key_states = self.k_proj(hidden_states)
-        
-
-        query_states = query_states.view(bsz, q_len, self.num_heads, self.head_dim).transpose(1, 2)
-        key_states = key_states.view(bsz, q_len, self.num_key_value_heads, self.head_dim).transpose(1, 2)
-        attn_weight = query_states @ key_states.transpose(-2, -1)
-        
-        attn_logits = attn_weight
-
-        return attn_logits
-
 LLAMA_ATTENTION_CLASSES = {
     "eager": LlamaDynamicvitAttention,
     "flash_attention_2": LlamaDynamicvitFlashAttention2,
     "sdpa": LlamaDynamicvitSdpaAttention,
 }
-        
+
 class LlamaDynamicvitDecoderLayer(LlamaDecoderLayer):
     def __init__(self, config: LlamaConfig, layer_idx: int):
-        super(LlamaDecoderLayer,self).__init__() 
+        super(LlamaDecoderLayer,self).__init__()
         self.hidden_size = config.hidden_size
         
         assert config._attn_implementation == 'sdpa', 'Only support sdpa'
         self.self_attn = LLAMA_ATTENTION_CLASSES[config._attn_implementation](config=config, layer_idx=layer_idx)
-        # self.flash_attn = LLAMA_ATTENTION_CLASSES["flash_attention_2"](config=config, layer_idx=layer_idx)
+
         self.mlp = LlamaMLP(config)
         self.input_layernorm = LlamaRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
         self.post_attention_layernorm = LlamaRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
@@ -855,15 +735,11 @@ class LlamaDynamicvitDecoderLayer(LlamaDecoderLayer):
         self,
         hidden_states: torch.Tensor,
         policy = None,
-        sparse_layer = None,
         attention_mask: Optional[torch.Tensor] = None,
         position_ids: Optional[torch.LongTensor] = None,
         past_key_value: Optional[Tuple[torch.Tensor]] = None,
         output_attentions: Optional[bool] = False,
         use_cache: Optional[bool] = False,
-        v_token_start = None,
-        v_token_num = None,
-        t_token_idx = None,
         **kwargs,
     ) -> Tuple[torch.FloatTensor, Optional[Tuple[torch.FloatTensor, torch.FloatTensor]]]:
         """
@@ -891,79 +767,38 @@ class LlamaDynamicvitDecoderLayer(LlamaDecoderLayer):
 
         # ------------------------ ADD attribute "policy" -----------------------------------
         # Self Attention
-        if sparse_layer :   # 
-            hidden_states, self_attn_weights, present_key_value,relation_vis_text  = self.flash_attn(
-                hidden_states=hidden_states,
-                policy=policy,
-                attention_mask=attention_mask,
-                position_ids=position_ids,
-                past_key_value=past_key_value,
-                output_attentions=output_attentions,
-                use_cache=use_cache,
-                return_logits = True,
-                v_token_start = v_token_start,
-                v_token_num = v_token_num,
-                t_token_idx = t_token_idx,
-                **kwargs,
-            )
-            # ------------------------ ADD Over -----------------------------------
-        
-            hidden_states = residual + hidden_states
+        hidden_states, self_attn_weights, present_key_value, attn_logits = self.self_attn(
+            hidden_states=hidden_states,
+            policy=policy,
+            attention_mask=attention_mask,
+            position_ids=position_ids,
+            past_key_value=past_key_value,
+            output_attentions=output_attentions,
+            use_cache=use_cache,
+            **kwargs,
+        )
+        # ------------------------ ADD Over -----------------------------------
+    
+        hidden_states = residual + hidden_states
 
-            # Fully Connected
-            residual = hidden_states
-            hidden_states = self.post_attention_layernorm(hidden_states)
-            hidden_states = self.mlp(hidden_states)
-            # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-            # hidden_states = hidden_states.to(device)
-            # print(hidden_states,residual)
-            hidden_states = residual + hidden_states
+        # Fully Connected
+        residual = hidden_states
+        hidden_states = self.post_attention_layernorm(hidden_states)
+        hidden_states = self.mlp(hidden_states)
 
-            outputs = (hidden_states,)
+        hidden_states = residual + hidden_states
 
-            if output_attentions:
-                outputs += (self_attn_weights,)
+        outputs = (hidden_states,)
 
-            if use_cache:
-                outputs += (present_key_value,)
-            outputs += (relation_vis_text, )  
-            return outputs
+        if output_attentions:
+            outputs += (self_attn_weights,)
 
-        else :
-            hidden_states, self_attn_weights, present_key_value,attn_logits = self.flash_attn(
-                hidden_states=hidden_states,
-                policy=policy,
-                attention_mask=attention_mask,
-                position_ids=position_ids,
-                past_key_value=past_key_value,
-                output_attentions=output_attentions,
-                use_cache=use_cache,
-                return_logits = False,
-                **kwargs,
-            )
-            # ------------------------ ADD Over -----------------------------------
-        
-            hidden_states = residual + hidden_states
+        if use_cache:
+            outputs += (present_key_value,)
 
-            # Fully Connected
-            residual = hidden_states
-            hidden_states = self.post_attention_layernorm(hidden_states)
-            hidden_states = self.mlp(hidden_states)
-            # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-            # hidden_states = hidden_states.to(device)
-            # print(hidden_states,residual)
-            hidden_states = residual + hidden_states
+        outputs += (attn_logits, )
 
-            outputs = (hidden_states,)
-
-            if output_attentions:
-                outputs += (self_attn_weights,)
-
-            if use_cache:
-                outputs += (present_key_value,)
-            attn_logits = None
-            outputs += (attn_logits, )  
-            return outputs
+        return outputs
 
 
 class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
@@ -981,10 +816,10 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
-        image_shape=576,
-        token_length_list=[],
+        image_shape = 576,
+        token_length_list = [],
         pre_prompt_length_list = [],
-        retained_tokens = 192,
+        logger = [],
     ) -> Union[Tuple, CausalLMOutputWithPast]:
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
         output_hidden_states = (
@@ -1004,9 +839,9 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
             output_hidden_states=output_hidden_states,
             return_dict=return_dict,
             image_shape=image_shape,
-            token_length_list = token_length_list,
-            pre_prompt_length_list = pre_prompt_length_list,
-            retained_tokens = retained_tokens
+            token_length_list=token_length_list,
+            pre_prompt_length_list=pre_prompt_length_list,
+            logger=logger
         )
 
         prev_decision = outputs[0]
@@ -1061,10 +896,10 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
         streamer: Optional["BaseStreamer"] = None,
         negative_prompt_ids: Optional[torch.Tensor] = None,
         negative_prompt_attention_mask: Optional[torch.Tensor] = None,
-        image_shape=576,
-        token_length_list=[],
+        image_shape = 576,
+        token_length_list = [],
         pre_prompt_length_list = [],
-        retained_tokens = 192,
+        logger = [],
         **kwargs,
     ) -> Union[GenerateOutput, torch.LongTensor]:
         if synced_gpus is None:
@@ -1282,10 +1117,10 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
                 return_dict_in_generate=generation_config.return_dict_in_generate,
                 synced_gpus=synced_gpus,
                 streamer=streamer,
-                image_shape = image_shape,
-                token_length_list = token_length_list,
-                pre_prompt_length_list = pre_prompt_length_list,
-                retained_tokens = retained_tokens,
+                image_shape=image_shape,
+                token_length_list=token_length_list,
+                pre_prompt_length_list=pre_prompt_length_list,
+                logger=logger,
                 **model_kwargs,
             )
 
@@ -1528,7 +1363,7 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
         image_shape = 576,
         token_length_list = [],
         pre_prompt_length_list = [],
-        retained_tokens = 192,
+        logger = [],
         **model_kwargs,
     ) -> Union[GenerateNonBeamOutput, torch.LongTensor]:
         r"""
@@ -1694,10 +1529,10 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
                 return_dict=True,
                 output_attentions=output_attentions,
                 output_hidden_states=output_hidden_states,
-                image_shape = image_shape,
-                token_length_list = token_length_list,
-                pre_prompt_length_list = pre_prompt_length_list,
-                retained_tokens = retained_tokens,
+                image_shape=image_shape,
+                token_length_list=token_length_list,
+                pre_prompt_length_list=pre_prompt_length_list,
+                logger=logger,
             )
             outputs = outputs[2]
             if synced_gpus and this_peer_finished:
@@ -1766,8 +1601,8 @@ class LlamaDynamicvitForCausalLM(LlamaForCausalLM):
 
         causal_inference_cuda_time_ms = causal_inference_start_event.elapsed_time(causal_inference_end_event)
         self.model.causal_inference_cuda_time += causal_inference_cuda_time_ms
-        # FLOPs_avg = all_FLOPs /self.num_layers
-        # print(f"total_causal_inference_cuda_time:{self.model.causal_inference_cuda_time}")
+        loggerinfo.info(f"{pad} Total Time (ms): {self.model.causal_inference_cuda_time:.2f}")
+
         if streamer is not None:
             streamer.end()
 

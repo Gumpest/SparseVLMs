@@ -1,37 +1,45 @@
-<div align="center">
+# ⚡ SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference </h1>
 
-<h1> SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference </h1>
 
-<h5 align="center"> 
 
+**SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference** [[Paper](https://arxiv.org/pdf/2410.04417)] [[Code](https://github.com/Gumpest/SparseVLMs/tree/v1.5)] <br>
 [Yuan Zhang](https://gumpest.github.io/)<sup>1,3* </sup>,
 [Chun-Kai Fan](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1*</sup>,
 [Junpeng Ma]()<sup>2*</sup>,
 [Wenzhao Zheng](https://wzzheng.net/)<sup>3✉️</sup>,
 [Tao Huang](https://taohuang.info/)<sup>4</sup>,
-[Kuan Cheng](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>,
-
+[Kuan Cheng](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>, <br>
 [Denis Gudovskiy]()<sup>5</sup>,
 [Tomoyuki Okuno]()<sup>5</sup>,
 [Yohei Nakata]()<sup>5</sup>,
 [Kurt Keutzer](http://people.eecs.berkeley.edu/~keutzer/)<sup>3</sup>,
 [Shanghang Zhang](https://idm.pku.edu.cn/info/1017/1598.htm)<sup>1✉️</sup>
 
-<sup>1</sup>School of Computer Science, Peking University, <sup>2</sup>Fudan University,
+**SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern** [[Paper]()] [[Code](https://github.com/Gumpest/SparseVLMs)] <br>
+[Yuan Zhang](https://gumpest.github.io/)<sup>1* </sup>,
+[Junpeng Ma]()<sup>1,2*</sup>,
+[QiZhe Zhang](https://scholar.google.com/citations?user=cdAi_uIAAAAJ&hl=zh-CN)<sup>1</sup>,
+[Chun-Kai Fan](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1</sup>,
+[Wenzhao Zheng](https://wzzheng.net/)<sup>3</sup>, <br>
+[Kuan Cheng](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>,
+[Jiwen Lu](https://scholar.google.com/citations?user=TN8uDQoAAAAJ&hl=en)<sup>6</sup>,
+[Shanghang Zhang](https://idm.pku.edu.cn/info/1017/1598.htm)<sup>1✉️</sup>
 
-<sup>3</sup>UC Berkeley, <sup>4</sup>The University of Sydney, <sup>5</sup>Panasonic Holdings Corporation
+<sup>1</sup>CS, Peking University, <sup>2</sup>Fudan University, <sup>3</sup>EECS, UC Berkeley,
 
-</h5>
-</div>
+ <sup>4</sup>The University of Sydney, <sup>5</sup>Panasonic, <sup>6</sup>Tsinghua University
+
 
 ## 📜 News 
+🔥 **[2025/12/31]** We released new version **[SparseVLM+](https://arxiv.org/pdf/2410.04417)**! **Stronger Performance with Improved Text-Visual Attention Pattern**!
+
 🔥 **[2025/06/04]** The sparsification code for **[VideoLLaVA](https://github.com/Gumpest/SparseVLMs/tree/video)** is now open source! Please check the `video branch`.
 
 🔥 **[2025/05/01]** Our SparseVLM is accepted by **ICML 2025**!
 
 🔥 **[2025/03/06]** We released **[SparseVLM v1.5](https://arxiv.org/pdf/2410.04417)**! **Higher Accuracy, Flexible Pruning Manner, and Compatibility with FlashAttention 2**!
 
-🔥 **[2024/10/15]** We released **[SparseVLM](https://arxiv.org/pdf/2410.04417)** and its **[Project Page](https://leofan90.github.io/SparseVLMs.github.io/)**! The **[Code](https://github.com/Gumpest/SparseVLMs)** is now open-source!
+🔥 **[2024/10/15]** We released **[SparseVLM](https://arxiv.org/pdf/2410.04417)** and its **[Project Page](https://leofan90.github.io/SparseVLMs.github.io/)**! The **[Code](https://github.com/Gumpest/SparseVLMs)** is now open-source! Please check the `v1.5 branch` for the latest version.
 
 
 <p align='center'>
@@ -44,6 +52,7 @@
 - [Overview](#overview)
 - [Preparation](#preparation)
 - [Usage](#usage)
+- [SparseVLM+](#sparsevlm+)
 - [Citation](#citation)
 - [Acknowledgment](#acknowledgment)
 
@@ -76,32 +85,50 @@ pip install flash_attn==2.3.3
 
 Please follow the detailed instruction in [LLaVA-Evaluation](https://github.com/haotian-liu/LLaVA/blob/main/docs/Evaluation.md).
 
-## 🎯 Usage
-Specifically, `--retained_tokens` in script indicates the number of tokens to be retained after the SparseVLM algorithm. It supports three numbers of tokens, including **192, 128, and 64**. If a specific number of tokens is required, please make modifications in `./llava/model/language_model/score.py`
+## 🎯 Basic Usage
+Specifically, setting `RETAIN_TOKN` in the environment variables indicates the number of tokens to be retained after the SparseVLM algorithm. It supports four numbers of tokens, including **192, 128, 96, and 64**. If a specific number of tokens is required, please make modifications in `./llava/model/language_model/score.py`
 
-1. Example for evaluating MME results (default 192 tokens):
+1. Example for evaluating MME results (retain 192 tokens):
 ```Shell
-CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/mme.sh
+RETAIN_TOKN=192 bash scripts/v1_5/eval/mme.sh
 ```
 
-2. Example for evaluating POPE results (default 192 tokens):
+2. Example for evaluating TextVQA results (retain 128 tokens):
 ```Shell
-CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/pope.sh
+RETAIN_TOKN=128 bash scripts/v1_5/eval/textvqa.sh
 ```
 
-3. Example for evaluating ScienceQA results (default 192 tokens):
+3. Example for evaluating ScienceQA results (retain 96 tokens):
 ```Shell
-CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/sqa.sh
+RETAIN_TOKN=96 bash scripts/v1_5/eval/sqa.sh
 ```
 
-4. Example for evaluating TextVQA results (default 192 tokens):
+4. Example for evaluating MMBench results (default 64 tokens):
 ```Shell
-CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/textvqa.sh
+RETAIN_TOKN=64 bash scripts/v1_5/eval/mmbench.sh
 ```
 
-5. Example for evaluating MMBench results (default 192 tokens):
+## 🛠️ One-Click Enable SparseVLM+ (V2.0 Mode)
+You can boost the performance of SparseVLM by enabling the V2.0 mode, which can be seamlessly enabled via an environment variable without modifying the code.
+
+1. Example for evaluating MME results (retain 192 tokens):
 ```Shell
-CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/mmbench.sh
+USE_VERSION=2_0 RETAIN_TOKN=192 bash scripts/v1_5/eval/mme.sh
+```
+
+2. Example for evaluating TextVQA results (retain 128 tokens):
+```Shell
+USE_VERSION=2_0 RETAIN_TOKN=128 bash scripts/v1_5/eval/textvqa.sh
+```
+
+3. Example for evaluating MMBench results (retain 96 tokens):
+```Shell
+USE_VERSION=2_0 RETAIN_TOKN=96 bash scripts/v1_5/eval/mmbench.sh
+```
+
+4. Example for evaluating GQA results (retain 64 tokens):
+```Shell
+USE_VERSION=2_0 RETAIN_TOKN=64 bash scripts/v1_5/eval/gqa.sh
 ```
 
 ## License
@@ -115,6 +142,15 @@ If you use SparseVLM in your research, please cite our work by using the followi
   title={SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference},
   author={Zhang, Yuan and Fan, Chun-Kai and Ma, Junpeng and Zheng, Wenzhao and Huang, Tao and Cheng, Kuan and Gudovskiy, Denis and Okuno, Tomoyuki and Nakata, Yohei and Keutzer, Kurt and others},
   booktitle={International Conference on Machine Learning},
+  year={2025}
+}
+
+```
+
+```bibtex
+@inproceedings{zhang2025sparsevlmplus,
+  title={SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern},
+  author={Zhang, Yuan and Ma, Junpeng and Zhang, Qizhe and Fan, Chun-Kai and Zheng, Wenzhao and Cheng, Kuan and Lu, Jiwen and Zhang, Shanghang},
   year={2025}
 }
 
