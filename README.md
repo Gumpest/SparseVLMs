@@ -1,5 +1,13 @@
 # SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference ⚡  </h1>
 
+Powered by 
+<sup>1</sup> ![Peking University](https://img.shields.io/badge/Peking_University-blue?style=flat&logo=none) 
+<sup>2</sup> ![Fudan University](https://img.shields.io/badge/Fudan_University-orange?style=flat&logo=none) 
+<sup>3</sup> ![EECS, UC Berkeley](https://img.shields.io/badge/EECS_UC_Berkeley-green?style=flat&logo=none)
+<sup>4</sup> ![The University of Sydney](https://img.shields.io/badge/The_University_of_Sydney-red?style=flat&logo=none) 
+<sup>5</sup> ![Panasonic](https://img.shields.io/badge/Panasonic-purple?style=flat&logo=none) 
+<sup>6</sup> ![Tsinghua University](https://img.shields.io/badge/Tsinghua_University-brown?style=flat&logo=none)
+
 <h3 style="margin-bottom: 0; font-size: 1.5em;">
   SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference
 </h3>
@@ -37,11 +45,7 @@
   <b><a href="https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm">Kuan Cheng</a></b><sup>1</sup>,
   <b><a href="https://scholar.google.com/citations?user=TN8uDQoAAAAJ&hl=en">Jiwen Lu</a></b><sup>6</sup>,
   <b><a href="https://idm.pku.edu.cn/info/1017/1598.htm">Shanghang Zhang</a></b><sup>1✉️</sup>
-</p>
-
-> <sup>1</sup>**CS, Peking University**, <sup>2</sup>**Fudan University**, <sup>3</sup>**EECS, UC Berkeley**,<br>
-<sup>4</sup>**The University of Sydney**, <sup>5</sup>**Panasonic**, <sup>6</sup>**Tsinghua University** -->
-
+</p> -->
 
 
 ## 📜 News 
