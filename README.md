@@ -21,8 +21,12 @@
 
 <sup>3</sup>UC Berkeley, <sup>4</sup>The University of Sydney, <sup>5</sup>Panasonic Holdings Corporation
 
+[![Paper](https://img.shields.io/badge/V1.5%20Paper-arXiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/pdf/2410.04417)
+[![Code](https://img.shields.io/badge/V1.5%20Code-GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gumpest/SparseVLMs/tree/v1.5)
+
 </h5>
 </div>
+
 
 ## 📜 News 
 🔥 **[2025/06/04]** The sparsification code for **[VideoLLaVA](https://github.com/Gumpest/SparseVLMs/tree/video)** is now open source! Please check the `video branch`.
