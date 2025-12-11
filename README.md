@@ -19,13 +19,13 @@
 [**Yuan Zhang**](https://gumpest.github.io/)<sup>1* </sup>,
 [**Junpeng Ma**]()<sup>1,2*</sup>,
 [**QiZhe Zhang**](https://scholar.google.com/citations?user=cdAi_uIAAAAJ&hl=zh-CN)<sup>1</sup>,
-[**Chun-Kai Fan**](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1</sup>,
-[**Wenzhao Zheng**](https://wzzheng.net/)<sup>3</sup>, <br>
+[**Chun-Kai Fan**](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1</sup>,<br>
+[**Wenzhao Zheng**](https://wzzheng.net/)<sup>3</sup>, 
 [**Kuan Cheng**](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>,
 [**Jiwen Lu**](https://scholar.google.com/citations?user=TN8uDQoAAAAJ&hl=en)<sup>6</sup>,
 [**Shanghang Zhang**](https://idm.pku.edu.cn/info/1017/1598.htm)<sup>1✉️</sup>
 
-<sup>1</sup>**CS, Peking University**, <sup>2</sup>**Fudan University**, <sup>3</sup>**EECS, UC Berkeley**,
+<sup>1</sup>**CS, Peking University**, <sup>2</sup>**Fudan University**, <sup>3</sup>**EECS, UC Berkeley**,<br>
 <sup>4</sup>**The University of Sydney**, <sup>5</sup>**Panasonic**, <sup>6</sup>**Tsinghua University**
 
 
