@@ -61,7 +61,7 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
         image_shape = 576,
         token_length_list = [],
         pre_prompt_length_list = [],
-        retained_tokens = 192,
+        logger = [],
     ) -> Union[Tuple, CausalLMOutputWithPast]:
 
         if inputs_embeds is None:
@@ -99,7 +99,7 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
             image_shape = image_shape,
             token_length_list = token_length_list,
             pre_prompt_length_list = pre_prompt_length_list,
-            retained_tokens=retained_tokens
+            logger=logger
         )
 
     @torch.no_grad()
@@ -108,7 +108,7 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
         inputs: Optional[torch.Tensor] = None,
         images: Optional[torch.Tensor] = None,
         image_sizes: Optional[torch.Tensor] = None,
-        retained_tokens = 192,
+        logger = [],
         image_shape=576,
         token_length_list = [],
         pre_prompt_length_list = [],
@@ -130,7 +130,7 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
                 image_shape,        
                 token_length_list,  
                 pre_prompt_length_list,     
-            ) = self.prepare_sparse_inputs_labels_for_multimodal(       
+            ) = self.prepare_sparse_inputs_labels_for_multimodal(
                 inputs,
                 position_ids,
                 attention_mask,
@@ -145,11 +145,11 @@ class LlavaLlamaDynamicForCausalLM(LlamaDynamicvitForCausalLM, LlavaMetaForCausa
         return super().generate(
             position_ids=position_ids,
             attention_mask=attention_mask,
-            inputs_embeds=inputs_embeds,        # torch.Size([1, 664, 2048])
-            image_shape = image_shape,        
-            token_length_list = token_length_list,  
-            pre_prompt_length_list = pre_prompt_length_list,     
-            retained_tokens = retained_tokens,
+            inputs_embeds=inputs_embeds,
+            image_shape=image_shape,   
+            token_length_list=token_length_list,
+            pre_prompt_length_list=pre_prompt_length_list,
+            logger=logger,
             **kwargs
         )
 
