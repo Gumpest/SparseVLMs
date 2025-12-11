@@ -12,8 +12,8 @@ Powered by
   SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference
 </h3>
 
-[![Paper](https://img.shields.io/badge/Paper-arXiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/pdf/2410.04417)
-[![Code](https://img.shields.io/badge/Code-GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gumpest/SparseVLMs/tree/v1.5)
+[![Paper](https://img.shields.io/badge/V1.5%20Paper-arXiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/pdf/2410.04417)
+[![Code](https://img.shields.io/badge/V1.5%20Code-GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gumpest/SparseVLMs/tree/v1.5)
 
 <!-- <p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
   <b><a href="https://gumpest.github.io/">Yuan Zhang</a></b><sup>1,3*</sup>,
@@ -33,8 +33,8 @@ Powered by
   SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern
 </h3>
 
-[![Paper](https://img.shields.io/badge/Paper-arXiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](#)
-[![Code](https://img.shields.io/badge/Code-GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gumpest/SparseVLMs)
+[![Paper](https://img.shields.io/badge/V2.0%20Paper-arXiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](#)
+[![Code](https://img.shields.io/badge/V2.0%20Code-GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gumpest/SparseVLMs)
 
 <!-- <p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
   <b><a href="https://gumpest.github.io/">Yuan Zhang</a></b><sup>1*</sup>,
@@ -49,7 +49,7 @@ Powered by
 
 
 ## 📜 News 
-🔥 **[2025/12/11]** We released new version **[SparseVLM+](https://arxiv.org/pdf/2410.04417)**! **Stronger Performance with Improved Text-Visual Attention Pattern**!
+🔥 **[2025/12/11]** We released new version **[SparseVLM+](https://arxiv.org/pdf/2410.04417)**! Bring a **Stronger Performance with Improved Text-Visual Attention Pattern**!
 
 🔥 **[2025/06/04]** The sparsification code for **[VideoLLaVA](https://github.com/Gumpest/SparseVLMs/tree/video)** is now open source! Please check the `video branch`.
 
