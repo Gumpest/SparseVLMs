@@ -1,42 +1,41 @@
 # SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference ⚡  </h1>
 
+<h3 style="margin-bottom: 0; font-size: 1.5em;">
+  SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference
+  <a href="https://arxiv.org/pdf/2410.04417">[Paper]</a>
+  <a href="https://github.com/Gumpest/SparseVLMs/tree/v1.5">[Code]</a>
+</h3>
 
- **SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference** [[Paper](https://arxiv.org/pdf/2410.04417)] [[Code](https://github.com/Gumpest/SparseVLMs/tree/v1.5)] <br>
- <div>
-<h5>
-  
-[**Yuan Zhang**](https://gumpest.github.io/)<sup>1,3* </sup>,
-[**Chun-Kai Fan**](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1*</sup>,
-[**Junpeng Ma**]()<sup>2*</sup>,
-[**Wenzhao Zheng**](https://wzzheng.net/)<sup>3✉️</sup>,
-[**Tao Huang**](https://taohuang.info/)<sup>4</sup>,
-[**Kuan Cheng**](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>, <br>
-[**Denis Gudovskiy**]()<sup>5</sup>,
-[**Tomoyuki Okuno**]()<sup>5</sup>,
-[**Yohei Nakata**]()<sup>5</sup>,
-[**Kurt Keutzer**](http://people.eecs.berkeley.edu/~keutzer/)<sup>3</sup>,
-[**Shanghang Zhang**](https://idm.pku.edu.cn/info/1017/1598.htm)<sup>1✉️</sup>
+<p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
+  <b><a href="https://gumpest.github.io/">Yuan Zhang</a></b><sup>1,3*</sup>,
+  <b><a href="https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao">Chun-Kai Fan</a></b><sup>1*</sup>,
+  <b><a href="https://scholar.google.com/citations?user=FH3u-hsAAAAJ&hl=en">Junpeng Ma</a></b><sup>2*</sup>,
+  <b><a href="https://wzzheng.net/">Wenzhao Zheng</a></b><sup>3✉️</sup>,
+  <b><a href="https://taohuang.info/">Tao Huang</a></b><sup>4</sup>,
+  <b><a href="https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm">Kuan Cheng</a></b><sup>1</sup>,<br>
+  <b><a href="https://github.com/Gumpest/SparseVLMs">Denis Gudovskiy</b><sup>5</sup>,
+  <b><a href="https://github.com/Gumpest/SparseVLMs">Tomoyuki Okuno</b><sup>5</sup>,
+  <b><a href="https://github.com/Gumpest/SparseVLMs">Yohei Nakata</b><sup>5</sup>,
+  <b><a href="http://people.eecs.berkeley.edu/~keutzer/">Kurt Keutzer</a></b><sup>3</sup>,
+  <b><a href="https://idm.pku.edu.cn/info/1017/1598.htm">Shanghang Zhang</a></b><sup>1✉️</sup>
+</p>
 
-</h5>
-</div>
+<h3 style="margin-bottom: 0; font-size: 1.5em;">
+  SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern
+  <a href="https://arxiv.org/pdf/2410.04417">[Paper]</a>
+  <a href="https://github.com/Gumpest/SparseVLMs">[Code]</a>
+</h3>
 
- **SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern** [[Paper]()] [[Code](https://github.com/Gumpest/SparseVLMs)] <br>
-<div>
-<h5>
-  
-[**Yuan Zhang**](https://gumpest.github.io/)<sup>1* </sup>,
-[**Junpeng Ma**]()<sup>1,2*</sup>,
-[**QiZhe Zhang**](https://scholar.google.com/citations?user=cdAi_uIAAAAJ&hl=zh-CN)<sup>1</sup>,
-[**Chun-Kai Fan**](https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao)<sup>1</sup>,<br>
-[**Wenzhao Zheng**](https://wzzheng.net/)<sup>3</sup>, 
-[**Kuan Cheng**](https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm)<sup>1</sup>,
-[**Jiwen Lu**](https://scholar.google.com/citations?user=TN8uDQoAAAAJ&hl=en)<sup>6</sup>,
-[**Shanghang Zhang**](https://idm.pku.edu.cn/info/1017/1598.htm)<sup>1✉️</sup>
-
-</h5>
-</div>
-
-<br>
+<p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
+  <b><a href="https://gumpest.github.io/">Yuan Zhang</a></b><sup>1*</sup>,
+  <b><a href="https://scholar.google.com/citations?user=FH3u-hsAAAAJ&hl=en">Junpeng Ma</b><sup>1,2*</sup>,
+  <b><a href="https://scholar.google.com/citations?user=cdAi_uIAAAAJ&hl=zh-CN">QiZhe Zhang</a></b><sup>1</sup>,
+  <b><a href="https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao">Chun-Kai Fan</a></b><sup>1</sup>,<br>
+  <b><a href="https://wzzheng.net/">Wenzhao Zheng</a></b><sup>3</sup>,
+  <b><a href="https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm">Kuan Cheng</a></b><sup>1</sup>,
+  <b><a href="https://scholar.google.com/citations?user=TN8uDQoAAAAJ&hl=en">Jiwen Lu</a></b><sup>6</sup>,
+  <b><a href="https://idm.pku.edu.cn/info/1017/1598.htm">Shanghang Zhang</a></b><sup>1✉️</sup>
+</p>
 
 > <sup>1</sup>**CS, Peking University**, <sup>2</sup>**Fudan University**, <sup>3</sup>**EECS, UC Berkeley**,<br>
 <sup>4</sup>**The University of Sydney**, <sup>5</sup>**Panasonic**, <sup>6</sup>**Tsinghua University**
