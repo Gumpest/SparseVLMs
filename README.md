@@ -3,7 +3,7 @@
 Powered by 
 <sup>1</sup> ![Peking University](https://img.shields.io/badge/Peking_University-blue?style=flat&logo=none) 
 <sup>2</sup> ![Fudan University](https://img.shields.io/badge/Fudan_University-orange?style=flat&logo=none) 
-<sup>3</sup> ![UC Berkeley](https://img.shields.io/badge/EECS_UC_Berkeley-green?style=flat&logo=none)
+<sup>3</sup> ![UC Berkeley](https://img.shields.io/badge/UC_Berkeley-green?style=flat&logo=none)
 <sup>4</sup> ![The University of Sydney](https://img.shields.io/badge/The_University_of_Sydney-red?style=flat&logo=none) 
 <sup>5</sup> ![Panasonic](https://img.shields.io/badge/Panasonic-purple?style=flat&logo=none) 
 <sup>6</sup> ![Tsinghua University](https://img.shields.io/badge/Tsinghua_University-brown?style=flat&logo=none)
