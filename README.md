@@ -7,7 +7,7 @@
 [![Paper](https://img.shields.io/badge/Paper-arXiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/pdf/2410.04417)
 [![Code](https://img.shields.io/badge/Code-GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gumpest/SparseVLMs/tree/v1.5)
 
-<p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
+<!-- <p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
   <b><a href="https://gumpest.github.io/">Yuan Zhang</a></b><sup>1,3*</sup>,
   <b><a href="https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao">Chun-Kai Fan</a></b><sup>1*</sup>,
   <b><a href="https://scholar.google.com/citations?user=FH3u-hsAAAAJ&hl=en">Junpeng Ma</a></b><sup>2*</sup>,
@@ -19,7 +19,7 @@
   <b><a href="https://github.com/Gumpest/SparseVLMs">Yohei Nakata</b><sup>5</sup>,
   <b><a href="http://people.eecs.berkeley.edu/~keutzer/">Kurt Keutzer</a></b><sup>3</sup>,
   <b><a href="https://idm.pku.edu.cn/info/1017/1598.htm">Shanghang Zhang</a></b><sup>1✉️</sup>
-</p>
+</p> -->
 
 <h3 style="margin-bottom: 0; font-size: 1.5em;">
   SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern
@@ -28,7 +28,7 @@
 [![Paper](https://img.shields.io/badge/Paper-arXiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](#)
 [![Code](https://img.shields.io/badge/Code-GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gumpest/SparseVLMs)
 
-<p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
+<!-- <p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
   <b><a href="https://gumpest.github.io/">Yuan Zhang</a></b><sup>1*</sup>,
   <b><a href="https://scholar.google.com/citations?user=FH3u-hsAAAAJ&hl=en">Junpeng Ma</b><sup>1,2*</sup>,
   <b><a href="https://scholar.google.com/citations?user=cdAi_uIAAAAJ&hl=zh-CN">QiZhe Zhang</a></b><sup>1</sup>,
@@ -40,7 +40,7 @@
 </p>
 
 > <sup>1</sup>**CS, Peking University**, <sup>2</sup>**Fudan University**, <sup>3</sup>**EECS, UC Berkeley**,<br>
-<sup>4</sup>**The University of Sydney**, <sup>5</sup>**Panasonic**, <sup>6</sup>**Tsinghua University**
+<sup>4</sup>**The University of Sydney**, <sup>5</sup>**Panasonic**, <sup>6</sup>**Tsinghua University** -->
 
 
 
