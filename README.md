@@ -1,6 +1,6 @@
 
 <p align='center'>
-<img src='./assests/logo.png' alt='mask' width='700px'>
+<img src='./assests/logo.png' alt='mask' width='650px'>
 </p>
 
 --------------------------------------------------------------------------------
