@@ -1,4 +1,9 @@
-# SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference ⚡  </h1>
+
+<p align='center'>
+<img src='./assests/logo.png' alt='mask' width='700px'>
+</p>
+
+--------------------------------------------------------------------------------
 
 Powered by 
 <sup>1</sup> ![Peking University](https://img.shields.io/badge/Peking_University-blue?style=flat&logo=none) 
