@@ -15,11 +15,11 @@
   <a href="https://github.com/Gumpest/SparseVLMs/tree/v1.5">
     <img src="https://img.shields.io/badge/Code-GitHub-181717?logo=github&logoColor=white">
   </a>
-  <img src="https://img.shields.io/badge/Version-1.0-4c8eda">
+  <img src="https://img.shields.io/badge/Version-1.5-4c8eda">
 </p>
 
 **SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern**<br>
-*Peking University, UC Berkeley, Tsinghua University*<br>
+*Peking University, Tsinghua University*<br>
 
 <p align="left">
   <a href="https://arxiv.org/pdf/2410.04417">
