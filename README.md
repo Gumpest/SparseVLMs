@@ -5,41 +5,31 @@
 
 --------------------------------------------------------------------------------
 
-Powered by 
-<sup>1</sup> ![Peking University](https://img.shields.io/badge/Peking_University-blue?style=flat&logo=none) 
-<sup>2</sup> ![Fudan University](https://img.shields.io/badge/Fudan_University-orange?style=flat&logo=none) 
-<sup>3</sup> ![UC Berkeley](https://img.shields.io/badge/UC_Berkeley-green?style=flat&logo=none)
-<sup>4</sup> ![The University of Sydney](https://img.shields.io/badge/The_University_of_Sydney-red?style=flat&logo=none) 
-<sup>5</sup> ![Panasonic](https://img.shields.io/badge/Panasonic-purple?style=flat&logo=none) 
-<sup>6</sup> ![Tsinghua University](https://img.shields.io/badge/Tsinghua_University-brown?style=flat&logo=none)
+**SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference**<br>
+*Peking University, UC Berkeley, Panasonic Holdings Corporation*<br>
 
-<h3 style="margin-bottom: 0; font-size: 1.5em;">
-  SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference
-</h3>
+<p align="left">
+  <a href="https://arxiv.org/pdf/2410.04417">
+    <img src="https://img.shields.io/badge/arXiv-2410.04417-b31b1b?logo=arxiv&logoColor=white">
+  </a>
+  <a href="https://github.com/Gumpest/SparseVLMs/tree/v1.5">
+    <img src="https://img.shields.io/badge/Code-GitHub-181717?logo=github&logoColor=white">
+  </a>
+  <img src="https://img.shields.io/badge/Version-1.0-4c8eda">
+</p>
 
-[![Paper](https://img.shields.io/badge/V1.5%20Paper-arXiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/pdf/2410.04417)
-[![Code](https://img.shields.io/badge/V1.5%20Code-GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gumpest/SparseVLMs/tree/v1.5)
+**SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern**<br>
+*Peking University, UC Berkeley, Tsinghua University*<br>
 
-<!-- <p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
-  <b><a href="https://gumpest.github.io/">Yuan Zhang</a></b><sup>1,3*</sup>,
-  <b><a href="https://scholar.google.com/citations?user=TxeAbWkAAAAJ&hl=en&oi=ao">Chun-Kai Fan</a></b><sup>1*</sup>,
-  <b><a href="https://scholar.google.com/citations?user=FH3u-hsAAAAJ&hl=en">Junpeng Ma</a></b><sup>2*</sup>,
-  <b><a href="https://wzzheng.net/">Wenzhao Zheng</a></b><sup>3✉️</sup>,
-  <b><a href="https://taohuang.info/">Tao Huang</a></b><sup>4</sup>,
-  <b><a href="https://cfcs.pku.edu.cn/people/faculty/kuancheng/index.htm">Kuan Cheng</a></b><sup>1</sup>,<br>
-  <b><a href="https://github.com/Gumpest/SparseVLMs">Denis Gudovskiy</b><sup>5</sup>,
-  <b><a href="https://github.com/Gumpest/SparseVLMs">Tomoyuki Okuno</b><sup>5</sup>,
-  <b><a href="https://github.com/Gumpest/SparseVLMs">Yohei Nakata</b><sup>5</sup>,
-  <b><a href="http://people.eecs.berkeley.edu/~keutzer/">Kurt Keutzer</a></b><sup>3</sup>,
-  <b><a href="https://idm.pku.edu.cn/info/1017/1598.htm">Shanghang Zhang</a></b><sup>1✉️</sup>
-</p> -->
-
-<h3 style="margin-bottom: 0; font-size: 1.5em;">
-  SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern
-</h3>
-
-[![Paper](https://img.shields.io/badge/V2.0%20Paper-arXiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](#)
-[![Code](https://img.shields.io/badge/V2.0%20Code-GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Gumpest/SparseVLMs)
+<p align="left">
+  <a href="https://arxiv.org/pdf/2410.04417">
+    <img src="https://img.shields.io/badge/arXiv-2410.04417-b31b1b?logo=arxiv&logoColor=white">
+  </a>
+  <a href="https://github.com/Gumpest/SparseVLMs">
+    <img src="https://img.shields.io/badge/Code-GitHub-181717?logo=github&logoColor=white">
+  </a>
+  <img src="https://img.shields.io/badge/Version-2.0-4c8eda">
+</p>
 
 <!-- <p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
   <b><a href="https://gumpest.github.io/">Yuan Zhang</a></b><sup>1*</sup>,
