@@ -26,7 +26,7 @@ International Conference on Machine Learning (ICML), 2025
 
 <p align="left">
   <a href="https://arxiv.org/pdf/2410.04417">
-    <img src="https://img.shields.io/badge/arXiv-2410.04417-b31b1b?style=for-the-badge&logo=arxiv&logoColor=white">
+    <img src="https://img.shields.io/badge/arXiv-Paper-b31b1b?style=for-the-badge&logo=arxiv&logoColor=white">
   </a>
   <a href="https://github.com/Gumpest/SparseVLMs/tree/v1.5">
     <img src="https://img.shields.io/badge/GitHub-Code-181717?style=for-the-badge&logo=github&logoColor=white">
@@ -166,9 +166,11 @@ If you use SparseVLM in your research, please cite our work by using the followi
 ```
 
 ```bibtex
-@article{zhangsparsevlm+,
+@article{zhang2026sparsevlmplus,
   title={SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern},
-  author={Zhang, Yuan and Ma, Junpeng and Zhang, Qizhe and Fan, Chun-Kai and Zheng, Wenzhao and Cheng, Kuan and Lu, Jiwen and Zhang, Shanghang}
+  author={Zhang, Yuan and Ma, Junpeng and Zhang, Qizhe and Fan, Chun-Kai and Zheng, Wenzhao and Cheng, Kuan and Lu, Jiwen and Zhang, Shanghang},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  year={2026}
 }
 
 ```
