@@ -5,30 +5,33 @@
 
 --------------------------------------------------------------------------------
 
-**SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference**<br>
-*Peking University, UC Berkeley, Panasonic Holdings Corporation*<br>
-
-<p align="left">
-  <a href="https://arxiv.org/pdf/2410.04417">
-    <img src="https://img.shields.io/badge/arXiv-b31b1b?logo=arxiv&logoColor=white">
-  </a>
-  <a href="https://github.com/Gumpest/SparseVLMs/tree/v1.5">
-    <img src="https://img.shields.io/badge/Code-GitHub-181717?logo=github&logoColor=white">
-  </a>
-  <img src="https://img.shields.io/badge/Version-1.5-4c8eda">
-</p>
-
 **SparseVLM+: Visual Token Sparsification with Improved Text-Visual Attention Pattern**<br>
-*Peking University, Tsinghua University*<br>
+> *Peking University, Tsinghua University*<br>
+IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI), 2026
+
 
 <p align="left">
   <a href="https://www.researchgate.net/publication/398766915_SparseVLM_Visual_Token_Sparsification_with_Improved_Text-Visual_Attention_Pattern">
-    <img src="https://img.shields.io/badge/ResearchGate-b31b1b?logo=arxiv&logoColor=white">
+    <img src="https://img.shields.io/badge/ResearchGate-Paper-00CCBB?style=for-the-badge&logo=researchgate&logoColor=white">
   </a>
   <a href="https://github.com/Gumpest/SparseVLMs">
-    <img src="https://img.shields.io/badge/Code-GitHub-181717?logo=github&logoColor=white">
+    <img src="https://img.shields.io/badge/GitHub-Code-181717?style=for-the-badge&logo=github&logoColor=white">
   </a>
-  <img src="https://img.shields.io/badge/Version-2.0-4c8eda">
+  <img src="https://img.shields.io/badge/Version-v2.0-4c8eda?style=for-the-badge">
+</p>
+
+**SparseVLM: Visual Token Sparsification for Efficient Vision-Language Model Inference**<br>
+> *Peking University, UC Berkeley, Panasonic Holdings Corporation*<br>
+International Conference on Machine Learning (ICML), 2025
+
+<p align="left">
+  <a href="https://arxiv.org/pdf/2410.04417">
+    <img src="https://img.shields.io/badge/arXiv-2410.04417-b31b1b?style=for-the-badge&logo=arxiv&logoColor=white">
+  </a>
+  <a href="https://github.com/Gumpest/SparseVLMs/tree/v1.5">
+    <img src="https://img.shields.io/badge/GitHub-Code-181717?style=for-the-badge&logo=github&logoColor=white">
+  </a>
+  <img src="https://img.shields.io/badge/Version-v1.5-4c8eda?style=for-the-badge">
 </p>
 
 <!-- <p style="margin-top: 0; font-size: 0.6em; line-height: 1.4em;">
@@ -44,6 +47,8 @@
 
 
 ## 📜 News 
+🔥 **[2026/07/30]** Our SparseVLM+ is accepted by **TPAMI 2026**!
+
 🔥 **[2025/12/11]** We released new version **[SparseVLM+](https://arxiv.org/pdf/2410.04417)**! Bring a **Stronger Performance with Improved Text-Visual Attention Pattern**!
 
 🔥 **[2025/06/04]** The sparsification code for **[VideoLLaVA](https://github.com/Gumpest/SparseVLMs/tree/video)** is now open source! Please check the `video branch`.
